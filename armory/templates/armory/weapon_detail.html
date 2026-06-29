@@ -1,0 +1,28 @@
+{% extends "armory/base.html" %}
+
+{% block title %}{{ weapon.name }}{% endblock %}
+
+{% block content %}
+<h1>{{ weapon.name }}</h1>
+
+{% if weapon.description %}
+<p>{{ weapon.description }}</p>
+{% endif %}
+
+<table>
+    <tr><th>Short range</th><td>{{ weapon.short_range }}"</td></tr>
+    <tr><th>Long range</th><td>{{ weapon.long_range }}"</td></tr>
+    <tr><th>To Hit (short)</th><td>{{ weapon.to_hit_short }}</td></tr>
+    <tr><th>To Hit (long)</th><td>{{ weapon.to_hit_long }}</td></tr>
+    <tr><th>Strength</th><td>{{ weapon.strength }}</td></tr>
+    <tr><th>Damage</th><td>{{ weapon.damage }}</td></tr>
+    <tr><th>Save modifier</th><td>{{ weapon.save_modifier }}</td></tr>
+    <tr><th>Ammo roll</th><td>{{ weapon.ammo_roll }}</td></tr>
+</table>
+
+<p>
+    <a href="{% url 'armory:weapon_update' weapon.pk %}">Edit</a>
+    <a href="{% url 'armory:weapon_delete' weapon.pk %}">Delete</a>
+    <a href="{% url 'armory:weapon_list' %}">Back to list</a>
+</p>
+{% endblock %}

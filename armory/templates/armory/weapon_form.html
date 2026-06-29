@@ -1,0 +1,14 @@
+{% extends "armory/base.html" %}
+
+{% block title %}{% if weapon %}Edit {{ weapon.name }}{% else %}New Weapon{% endif %}{% endblock %}
+
+{% block content %}
+<h1>{% if weapon %}Edit "{{ weapon.name }}"{% else %}New Weapon{% endif %}</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+    <a href="{% url 'armory:weapon_list' %}" class="btn-cancel">Cancel</a>
+</form>
+{% endblock %}
