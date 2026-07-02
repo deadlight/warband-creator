@@ -1,0 +1,19 @@
+{% extends "armory/base.html" %}
+
+{% block title %}Remove Weapon{% endblock %}
+
+{% block content %}
+<h1>Remove Weapon?</h1>
+
+<p>
+    Remove <strong>{{ warbandmemberweapon.weapon_game.weapon.name }}</strong>
+    from <strong>{{ member.character.name }}</strong>
+    in <strong>{{ warband.name }}</strong>?
+</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn-delete">Remove</button>
+    <a href="{% url 'warbands:warband_detail' warband.pk %}" class="btn-cancel">Cancel</a>
+</form>
+{% endblock %}

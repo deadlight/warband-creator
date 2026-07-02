@@ -1,3 +1,4 @@
+from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
@@ -8,6 +9,9 @@ from .forms import (
     FactionForm,
     GameForm,
     SpecialRuleForm,
+    WarbandForm,
+    WarbandMemberForm,
+    WarbandMemberWeaponForm,
     WeaponForm,
     WeaponGameForm,
     WeaponProfileForm,
@@ -18,6 +22,9 @@ from .models import (
     Faction,
     Game,
     SpecialRule,
+    Warband,
+    WarbandMember,
+    WarbandMemberWeapon,
     Weapon,
     WeaponGame,
     WeaponProfile,
@@ -305,3 +312,159 @@ class CharacterUpdateView(UpdateView):
 class CharacterDeleteView(DeleteView):
     model = Character
     success_url = reverse_lazy("armory:character_list")
+
+
+class WarbandListView(ListView):
+    model = Warband
+    context_object_name = "warbands"
+
+    def get_queryset(self):
+        members_qs = WarbandMember.objects.order_by("order", "character__name")
+        return Warband.objects.prefetch_related(
+            Prefetch("members", queryset=members_qs.select_related("character")),
+            "game",
+            "faction",
+        )
+
+
+class WarbandDetailView(DetailView):
+    model = Warband
+    context_object_name = "warband"
+
+    def get_queryset(self):
+        members_qs = WarbandMember.objects.order_by("order", "character__name")
+        return Warband.objects.prefetch_related(
+            Prefetch(
+                "members",
+                queryset=members_qs.prefetch_related(
+                    "character",
+                    Prefetch(
+                        "weapons",
+                        queryset=WarbandMemberWeapon.objects.select_related(
+                            "weapon_game__weapon", "weapon_game__game"
+                        ),
+                    ),
+                ),
+            ),
+            "game",
+            "faction",
+        )
+
+
+class WarbandCreateView(CreateView):
+    model = Warband
+    form_class = WarbandForm
+    success_url = reverse_lazy("warbands:warband_list")
+
+
+class WarbandUpdateView(UpdateView):
+    model = Warband
+    form_class = WarbandForm
+    success_url = reverse_lazy("warbands:warband_list")
+
+
+class WarbandDeleteView(DeleteView):
+    model = Warband
+    success_url = reverse_lazy("warbands:warband_list")
+
+
+class WarbandMemberCreateView(CreateView):
+    model = WarbandMember
+    form_class = WarbandMemberForm
+    template_name = "armory/warbandmember_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        self.warband = get_object_or_404(Warband, pk=self.kwargs["warband_pk"])
+        kwargs["warband"] = self.warband
+        return kwargs
+
+    def form_valid(self, form):
+        form.instance.warband = self.warband
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["warband"] = self.warband
+        return context
+
+    def get_success_url(self):
+        return reverse("warbands:warband_detail", kwargs={"pk": self.kwargs["warband_pk"]})
+
+
+class WarbandMemberUpdateView(UpdateView):
+    model = WarbandMember
+    form_class = WarbandMemberForm
+    template_name = "armory/warbandmember_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["warband"] = self.object.warband
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["warband"] = self.object.warband
+        context["member"] = self.object
+        return context
+
+    def get_success_url(self):
+        return reverse("warbands:warband_detail", kwargs={"pk": self.object.warband_id})
+
+
+class WarbandMemberDeleteView(DeleteView):
+    model = WarbandMember
+    template_name = "armory/warbandmember_confirm_delete.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["warband"] = get_object_or_404(Warband, pk=self.kwargs["warband_pk"])
+        return context
+
+    def get_success_url(self):
+        return reverse("warbands:warband_detail", kwargs={"pk": self.kwargs["warband_pk"]})
+
+
+class WarbandMemberWeaponCreateView(CreateView):
+    model = WarbandMemberWeapon
+    form_class = WarbandMemberWeaponForm
+    template_name = "armory/warbandmemberweapon_form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        self.member = get_object_or_404(
+            WarbandMember.objects.select_related("warband__game"),
+            pk=self.kwargs["member_pk"],
+        )
+        kwargs["warband"] = self.member.warband
+        kwargs["member"] = self.member
+        return kwargs
+
+    def form_valid(self, form):
+        form.instance.member = self.member
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["member"] = self.member
+        context["warband"] = self.member.warband
+        return context
+
+    def get_success_url(self):
+        return reverse("warbands:warband_detail", kwargs={"pk": self.member.warband_id})
+
+
+class WarbandMemberWeaponDeleteView(DeleteView):
+    model = WarbandMemberWeapon
+    template_name = "armory/warbandmemberweapon_confirm_delete.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        obj = self.get_object()
+        context["warband"] = obj.member.warband
+        context["member"] = obj.member
+        return context
+
+    def get_success_url(self):
+        obj = self.get_object()
+        return reverse("warbands:warband_detail", kwargs={"pk": obj.member.warband_id})

@@ -1,0 +1,71 @@
+{% extends "armory/base.html" %}
+
+{% block title %}{{ warband.name }}{% endblock %}
+
+{% block content %}
+<h1>{{ warband.name }}</h1>
+
+{% if warband.description %}
+<p>{{ warband.description }}</p>
+{% endif %}
+
+<p><strong>Game:</strong> {{ warband.game.name }}</p>
+{% if warband.faction %}
+<p><strong>Faction:</strong> {{ warband.faction.name }}</p>
+{% endif %}
+
+<h2>Members ({{ warband.members.count }})</h2>
+
+{% if warband.members.all %}
+<table>
+    <thead>
+        <tr>
+            <th>Order</th>
+            <th>Name</th>
+            <th>Character</th>
+            <th>Faction</th>
+            <th>Weapons</th>
+            <th>Weapon Cost</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for member in warband.members.all %}
+        <tr>
+            <td>{{ member.order }}</td>
+            <td>{{ member.display_name }}</td>
+            <td>
+                <a href="{% url 'armory:character_detail' member.character.pk %}">{{ member.character.name }}</a>
+            </td>
+            <td>{{ member.character.faction.name|default:"&mdash;" }}</td>
+            <td>
+                {% for mw in member.weapons.all %}
+                    {{ mw.weapon_game.weapon.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    &mdash;
+                {% endfor %}
+            </td>
+            <td>{{ member.total_cost|default:"&mdash;" }}</td>
+            <td class="actions">
+                <a href="{% url 'warbands:warbandmemberweapon_create' warband.pk member.pk %}">Add weapon</a>
+                <a href="{% url 'warbands:warbandmember_update' warband.pk member.pk %}">Edit</a>
+                <a href="{% url 'warbands:warbandmember_delete' warband.pk member.pk %}">Remove</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No members yet.</p>
+{% endif %}
+
+<p>
+    <a href="{% url 'warbands:warbandmember_create' warband.pk %}">Add member</a>
+</p>
+
+<p>
+    <a href="{% url 'warbands:warband_update' warband.pk %}">Edit</a>
+    <a href="{% url 'warbands:warband_delete' warband.pk %}">Delete</a>
+    <a href="{% url 'warbands:warband_list' %}">Back to warbands</a>
+</p>
+{% endblock %}

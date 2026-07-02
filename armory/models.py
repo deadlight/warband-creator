@@ -357,3 +357,68 @@ class CharacterGameCost(models.Model):
 
     def __str__(self):
         return f"{self.character.name} in {self.game.name}"
+
+
+class Warband(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name="warbands")
+    faction = models.ForeignKey(
+        Faction, on_delete=models.SET_NULL, null=True, blank=True, related_name="warbands"
+    )
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def total_cost(self):
+        return sum(member.total_cost for member in self.members.all())
+
+
+class WarbandMember(models.Model):
+    warband = models.ForeignKey(Warband, on_delete=models.CASCADE, related_name="members")
+    character = models.ForeignKey(
+        Character, on_delete=models.CASCADE, related_name="warband_memberships"
+    )
+    name = models.CharField(max_length=255, blank=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["order", "character__name"]
+
+    def __str__(self):
+        return f"{self.display_name} in {self.warband.name}"
+
+    @property
+    def display_name(self):
+        return self.name or self.character.name
+
+    @property
+    def total_cost(self):
+        weapon_cost = sum(
+            w.weapon_game.cost or 0
+            for w in self.weapons.select_related("weapon_game").all()
+            if w.weapon_game
+        )
+        return weapon_cost
+
+
+class WarbandMemberWeapon(models.Model):
+    member = models.ForeignKey(WarbandMember, on_delete=models.CASCADE, related_name="weapons")
+    weapon_game = models.ForeignKey(
+        WeaponGame,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="warband_assignments",
+    )
+
+    class Meta:
+        ordering = ["weapon_game__weapon__name"]
+
+    def __str__(self):
+        weapon_name = self.weapon_game.weapon.name if self.weapon_game else "(no weapon)"
+        return f"{weapon_name} for {self.member}"

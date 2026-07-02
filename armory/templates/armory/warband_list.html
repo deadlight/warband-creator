@@ -1,0 +1,37 @@
+{% extends "armory/base.html" %}
+
+{% block title %}Warbands{% endblock %}
+
+{% block content %}
+<h1>Warbands</h1>
+
+{% if warbands %}
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Game</th>
+            <th>Faction</th>
+            <th>Members</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for w in warbands %}
+        <tr>
+            <td><a href="{% url 'warbands:warband_detail' w.pk %}">{{ w.name }}</a></td>
+            <td>{{ w.game.name }}</td>
+            <td>{{ w.faction.name|default:"&mdash;" }}</td>
+            <td>{{ w.members.count }}</td>
+            <td class="actions">
+                <a href="{% url 'warbands:warband_update' w.pk %}">Edit</a>
+                <a href="{% url 'warbands:warband_delete' w.pk %}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No warbands yet. <a href="{% url 'warbands:warband_create' %}">Create one</a>.</p>
+{% endif %}
+{% endblock %}

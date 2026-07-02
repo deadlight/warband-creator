@@ -5,6 +5,9 @@ from .models import (
     Faction,
     Game,
     SpecialRule,
+    Warband,
+    WarbandMember,
+    WarbandMemberWeapon,
     Weapon,
     WeaponGame,
     WeaponProfile,
@@ -145,3 +148,47 @@ class CharacterForm(forms.ModelForm):
         widgets = {
             "weapon_types": forms.CheckboxSelectMultiple,
         }
+
+
+class WarbandForm(forms.ModelForm):
+    class Meta:
+        model = Warband
+        fields = ["name", "description", "game", "faction"]
+        labels = {
+            "game": "Game system",
+            "faction": "Faction",
+        }
+
+
+class WarbandMemberForm(forms.ModelForm):
+    class Meta:
+        model = WarbandMember
+        fields = ["character", "name", "order"]
+        labels = {
+            "character": "Character",
+            "name": "Custom name (optional)",
+            "order": "Sort order",
+        }
+
+    def __init__(self, *args, warband=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if warband:
+            self.instance.warband = warband
+
+
+class WarbandMemberWeaponForm(forms.ModelForm):
+    class Meta:
+        model = WarbandMemberWeapon
+        fields = ["weapon_game"]
+        labels = {
+            "weapon_game": "Weapon",
+        }
+
+    def __init__(self, *args, warband=None, member=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if warband:
+            self.fields["weapon_game"].queryset = WeaponGame.objects.filter(
+                game=warband.game
+            ).select_related("weapon")
+        if member:
+            self.instance.member = member

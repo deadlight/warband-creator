@@ -1,0 +1,14 @@
+{% extends "armory/base.html" %}
+
+{% block title %}{% if warband %}Edit {{ warband.name }}{% else %}New Warband{% endif %}{% endblock %}
+
+{% block content %}
+<h1>{% if warband %}Edit "{{ warband.name }}"{% else %}New Warband{% endif %}</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+    <a href="{% url 'warbands:warband_list' %}" class="btn-cancel">Cancel</a>
+</form>
+{% endblock %}
