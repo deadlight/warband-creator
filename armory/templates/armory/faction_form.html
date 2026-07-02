@@ -1,0 +1,14 @@
+{% extends "armory/base.html" %}
+
+{% block title %}{% if faction %}Edit {{ faction.name }}{% else %}New Faction{% endif %}{% endblock %}
+
+{% block content %}
+<h1>{% if faction %}Edit "{{ faction.name }}"{% else %}New Faction{% endif %}</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+    <a href="{% url 'armory:faction_list' %}" class="btn-cancel">Cancel</a>
+</form>
+{% endblock %}

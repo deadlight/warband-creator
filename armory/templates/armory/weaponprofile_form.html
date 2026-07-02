@@ -1,0 +1,15 @@
+{% extends "armory/base.html" %}
+
+{% block title %}{% if weaponprofile %}Edit profile{% else %}New Profile{% endif %} - {{ weapon.name }}{% endblock %}
+
+{% block content %}
+<h1>{% if weaponprofile %}Edit profile{% else %}New Profile{% endif %}</h1>
+<h2>{{ weapon.name }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+    <a href="{% url 'armory:weapon_detail' weapon.pk %}" class="btn-cancel">Cancel</a>
+</form>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "armory/base.html" %}
+
+{% block title %}{% if character %}Edit {{ character.name }}{% else %}New Character{% endif %}{% endblock %}
+
+{% block content %}
+<h1>{% if character %}Edit "{{ character.name }}"{% else %}New Character{% endif %}</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+    <a href="{% url 'armory:character_list' %}" class="btn-cancel">Cancel</a>
+</form>
+{% endblock %}

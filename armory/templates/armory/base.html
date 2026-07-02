@@ -29,6 +29,16 @@
     <nav>
         <a href="{% url 'armory:weapon_list' %}">Weapons</a>
         <a href="{% url 'armory:weapon_create' %}">New Weapon</a>
+        <a href="{% url 'armory:game_list' %}">Games</a>
+        <a href="{% url 'armory:game_create' %}">New Game</a>
+        <a href="{% url 'armory:weapontype_list' %}">Types</a>
+        <a href="{% url 'armory:weapontype_create' %}">New Type</a>
+        <a href="{% url 'armory:specialrule_list' %}">Rules</a>
+        <a href="{% url 'armory:specialrule_create' %}">New Rule</a>
+        <a href="{% url 'armory:faction_list' %}">Factions</a>
+        <a href="{% url 'armory:faction_create' %}">New Faction</a>
+        <a href="{% url 'armory:character_list' %}">Characters</a>
+        <a href="{% url 'armory:character_create' %}">New Character</a>
     </nav>
 
     {% block content %}{% endblock %}

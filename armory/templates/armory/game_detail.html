@@ -1,0 +1,47 @@
+{% extends "armory/base.html" %}
+
+{% block title %}{{ game.name }}{% endblock %}
+
+{% block content %}
+<h1>{{ game.name }}</h1>
+
+{% if game.description %}
+<p>{{ game.description }}</p>
+{% endif %}
+
+<h2>Weapons</h2>
+{% if game.weapon_games.all %}
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Cost</th>
+            <th>Range</th>
+            <th>To Hit (S/L)</th>
+            <th>Str</th>
+            <th>Dmg</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in game.weapon_games.all %}
+        <tr>
+            <td><a href="{% url 'armory:weapon_detail' entry.weapon.pk %}">{{ entry.weapon.name }}</a></td>
+            <td>{{ entry.cost|default:"&mdash;" }}</td>
+            <td>{% if entry.weapon.short_range == entry.weapon.long_range %}{{ entry.weapon.short_range }}{% else %}{{ entry.weapon.short_range }} / {{ entry.weapon.long_range }}{% endif %}</td>
+            <td>{{ entry.weapon.to_hit_short_display }} / {{ entry.weapon.to_hit_long_display }}</td>
+            <td>{{ entry.weapon.strength }}</td>
+            <td>{{ entry.weapon.damage }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No weapons in this game yet.</p>
+{% endif %}
+
+<p>
+    <a href="{% url 'armory:game_update' game.pk %}">Edit</a>
+    <a href="{% url 'armory:game_delete' game.pk %}">Delete</a>
+    <a href="{% url 'armory:game_list' %}">Back to games</a>
+</p>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "armory/base.html" %}
+
+{% block title %}Delete profile - {{ weapon.name }}{% endblock %}
+
+{% block content %}
+<h1>Delete profile?</h1>
+<h2>{{ weapon.name }}{% if weaponprofile.name %} — {{ weaponprofile.name }}{% endif %}</h2>
+
+<p>Are you sure you want to delete this profile?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn-delete">Delete</button>
+    <a href="{% url 'armory:weapon_detail' weapon.pk %}" class="btn-cancel">Cancel</a>
+</form>
+{% endblock %}

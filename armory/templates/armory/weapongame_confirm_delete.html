@@ -1,0 +1,16 @@
+{% extends "armory/base.html" %}
+
+{% block title %}Remove link for {{ weapon.name }}{% endblock %}
+
+{% block content %}
+<h1>Remove "{{ weapon.name }}" from "{{ object.game.name }}"?</h1>
+
+<p>This will unlink the weapon from this game and remove its cost ({{ object.cost|default:"none" }} pts).
+The weapon itself will not be deleted.</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn-delete">Remove link</button>
+    <a href="{% url 'armory:weapon_detail' weapon.pk %}" class="btn-cancel">Cancel</a>
+</form>
+{% endblock %}

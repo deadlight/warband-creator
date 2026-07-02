@@ -5,20 +5,101 @@
 {% block content %}
 <h1>{{ weapon.name }}</h1>
 
+{% if weapon.weapon_type %}
+<p><strong>Type:</strong> {{ weapon.weapon_type.name }}</p>
+{% endif %}
+
 {% if weapon.description %}
 <p>{{ weapon.description }}</p>
 {% endif %}
 
+<h2>Game costs</h2>
+{% if weapon.weapon_games.all %}
 <table>
-    <tr><th>Short range</th><td>{{ weapon.short_range }}"</td></tr>
-    <tr><th>Long range</th><td>{{ weapon.long_range }}"</td></tr>
-    <tr><th>To Hit (short)</th><td>{{ weapon.to_hit_short }}</td></tr>
-    <tr><th>To Hit (long)</th><td>{{ weapon.to_hit_long }}</td></tr>
-    <tr><th>Strength</th><td>{{ weapon.strength }}</td></tr>
-    <tr><th>Damage</th><td>{{ weapon.damage }}</td></tr>
-    <tr><th>Save modifier</th><td>{{ weapon.save_modifier }}</td></tr>
-    <tr><th>Ammo roll</th><td>{{ weapon.ammo_roll }}</td></tr>
+    <thead>
+        <tr>
+            <th>Game</th>
+            <th>Cost</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in weapon.weapon_games.all %}
+        <tr>
+            <td><a href="{% url 'armory:game_detail' entry.game.pk %}">{{ entry.game.name }}</a></td>
+            <td>{{ entry.cost|default:"&mdash;" }}</td>
+            <td>
+                <a href="{% url 'armory:weapon_link_delete' weapon.pk entry.pk %}">Remove</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
+{% else %}
+<p>Not linked to any game yet.</p>
+{% endif %}
+<p><a href="{% url 'armory:weapon_link_create' weapon.pk %}">Link to a game</a></p>
+
+<h2>Profiles</h2>
+{% if weapon.profiles.all %}
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Short Range</th>
+            <th>Long Range</th>
+            <th>To Hit (S/L)</th>
+            <th>Str</th>
+            <th>Dmg</th>
+            <th>Save</th>
+            <th>Ammo</th>
+            <th>Cost</th>
+            <th>Suggested</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for profile in weapon.profiles.all %}
+        <tr>
+            <td>{{ profile.name|default:"Default" }}</td>
+            <td>{{ profile.short_range }}"</td>
+            <td>{{ profile.long_range }}"</td>
+            <td>{{ profile.to_hit_short_display }} / {{ profile.to_hit_long_display }}</td>
+            <td>{{ profile.strength }}</td>
+            <td>{{ profile.damage }}</td>
+            <td>{{ profile.save_modifier }}</td>
+            <td>{{ profile.ammo_roll }}</td>
+            <td>
+                {% if profile.cost is not None %}
+                    {{ profile.cost }}{% if profile.per_shot %}/shot{% endif %}
+                {% else %}
+                    &mdash;
+                {% endif %}
+            </td>
+            <td style="color: #888;">{{ profile.suggested_cost }}</td>
+            <td class="actions">
+                <a href="{% url 'armory:weaponprofile_update' weapon.pk profile.pk %}">Edit</a>
+                <a href="{% url 'armory:weaponprofile_delete' weapon.pk profile.pk %}">Delete</a>
+            </td>
+        </tr>
+        {% if profile.description %}
+        <tr><td colspan="10" style="font-size: 0.9em; color: #555; padding-top: 0;">{{ profile.description }}</td></tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No profiles yet.</p>
+{% endif %}
+<p><a href="{% url 'armory:weaponprofile_create' weapon.pk %}">Add profile</a></p>
+
+{% if weapon.special_rules.all %}
+<h2>Special Rules</h2>
+{% for rule in weapon.special_rules.all %}
+<h3>{{ rule.name }}</h3>
+{% if rule.description %}<p>{{ rule.description }}</p>{% endif %}
+{% endfor %}
+{% endif %}
 
 <p>
     <a href="{% url 'armory:weapon_update' weapon.pk %}">Edit</a>

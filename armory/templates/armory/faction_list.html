@@ -1,0 +1,33 @@
+{% extends "armory/base.html" %}
+
+{% block title %}Factions{% endblock %}
+
+{% block content %}
+<h1>Factions</h1>
+
+{% if factions %}
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Weapons</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for faction in factions %}
+        <tr>
+            <td>{{ faction.name }}</td>
+            <td>{{ faction.weapons.count }}</td>
+            <td class="actions">
+                <a href="{% url 'armory:faction_update' faction.pk %}">Edit</a>
+                <a href="{% url 'armory:faction_delete' faction.pk %}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No factions yet. <a href="{% url 'armory:faction_create' %}">Create one</a>.</p>
+{% endif %}
+{% endblock %}

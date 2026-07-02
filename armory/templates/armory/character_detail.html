@@ -1,0 +1,62 @@
+{% extends "armory/base.html" %}
+
+{% block title %}{{ character.name }}{% endblock %}
+
+{% block content %}
+<h1>{{ character.name }}</h1>
+
+{% if character.faction %}
+<p><strong>Faction:</strong> {{ character.faction.name }}</p>
+{% endif %}
+
+{% if character.description %}
+<p>{{ character.description }}</p>
+{% endif %}
+
+<h2>Statline</h2>
+<p style="font-family: monospace; font-size: 1.1em;">{{ character.statline }}</p>
+
+<table>
+    <tr><th>M</th><td>{{ character.movement }}</td><td>Movement</td></tr>
+    <tr><th>WS</th><td>{{ character.weapon_skill }}</td><td>Weapon Skill</td></tr>
+    <tr><th>BS</th><td>{{ character.ballistic_skill }}</td><td>Ballistic Skill</td></tr>
+    <tr><th>S</th><td>{{ character.strength }}</td><td>Strength</td></tr>
+    <tr><th>T</th><td>{{ character.toughness }}</td><td>Toughness</td></tr>
+    <tr><th>W</th><td>{{ character.wounds }}</td><td>Wounds</td></tr>
+    <tr><th>I</th><td>{{ character.initiative }}</td><td>Initiative</td></tr>
+    <tr><th>A</th><td>{{ character.attacks }}</td><td>Attacks</td></tr>
+    <tr><th>Ld</th><td>{{ character.leadership }}</td><td>Leadership</td></tr>
+</table>
+
+<h2>Games &amp; Costs</h2>
+{% if character.character_games.all %}
+<table>
+    <thead><tr><th>Game</th><th>Recruitment Cost</th></tr></thead>
+    <tbody>
+    {% for entry in character.character_games.all %}
+    <tr>
+        <td>{{ entry.game.name }}</td>
+        <td>{{ entry.cost|default:"&mdash;" }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Not linked to any game yet.</p>
+{% endif %}
+
+{% if character.weapon_types.all %}
+<h2>Available Weapon Types</h2>
+<ul>
+    {% for wt in character.weapon_types.all %}
+    <li>{{ wt.name }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<p>
+    <a href="{% url 'armory:character_update' character.pk %}">Edit</a>
+    <a href="{% url 'armory:character_delete' character.pk %}">Delete</a>
+    <a href="{% url 'armory:character_list' %}">Back to characters</a>
+</p>
+{% endblock %}

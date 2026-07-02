@@ -1,0 +1,59 @@
+{% extends "armory/base.html" %}
+
+{% block title %}Characters{% endblock %}
+
+{% block content %}
+<h1>Characters</h1>
+
+{% if characters %}
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Faction</th>
+            <th>M</th>
+            <th>WS</th>
+            <th>BS</th>
+            <th>S</th>
+            <th>T</th>
+            <th>W</th>
+            <th>I</th>
+            <th>A</th>
+            <th>Ld</th>
+            <th>Games (Cost)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in characters %}
+        <tr>
+            <td><a href="{% url 'armory:character_detail' c.pk %}">{{ c.name }}</a></td>
+            <td>{{ c.faction.name|default:"&mdash;" }}</td>
+            <td>{{ c.movement }}</td>
+            <td>{{ c.weapon_skill }}</td>
+            <td>{{ c.ballistic_skill }}</td>
+            <td>{{ c.strength }}</td>
+            <td>{{ c.toughness }}</td>
+            <td>{{ c.wounds }}</td>
+            <td>{{ c.initiative }}</td>
+            <td>{{ c.attacks }}</td>
+            <td>{{ c.leadership }}</td>
+            <td>
+                {% for entry in c.character_games.all %}
+                    {{ entry.game.name }}{% if entry.cost is not None %} ({{ entry.cost }}){% endif %}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    &mdash;
+                {% endfor %}
+            </td>
+            <td class="actions">
+                <a href="{% url 'armory:character_update' c.pk %}">Edit</a>
+                <a href="{% url 'armory:character_delete' c.pk %}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No characters yet. <a href="{% url 'armory:character_create' %}">Create one</a>.</p>
+{% endif %}
+{% endblock %}

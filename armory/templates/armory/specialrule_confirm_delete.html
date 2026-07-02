@@ -1,0 +1,19 @@
+{% extends "armory/base.html" %}
+
+{% block title %}Delete {{ specialrule.name }}{% endblock %}
+
+{% block content %}
+<h1>Delete "{{ specialrule.name }}" rule?</h1>
+
+{% if specialrule.weapons.count %}
+<p>This rule is used by {{ specialrule.weapons.count }} weapon(s). Deleting it will remove it from them.</p>
+{% else %}
+<p>Are you sure you want to delete this rule? This cannot be undone.</p>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn-delete">Delete</button>
+    <a href="{% url 'armory:specialrule_list' %}" class="btn-cancel">Cancel</a>
+</form>
+{% endblock %}

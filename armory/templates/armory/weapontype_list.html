@@ -1,0 +1,33 @@
+{% extends "armory/base.html" %}
+
+{% block title %}Types{% endblock %}
+
+{% block content %}
+<h1>Weapon Types</h1>
+
+{% if weapon_types %}
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Weapons</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for wt in weapon_types %}
+        <tr>
+            <td>{{ wt.name }}</td>
+            <td>{{ wt.weapons.count }}</td>
+            <td class="actions">
+                <a href="{% url 'armory:weapontype_update' wt.pk %}">Edit</a>
+                <a href="{% url 'armory:weapontype_delete' wt.pk %}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No types yet. <a href="{% url 'armory:weapontype_create' %}">Create one</a>.</p>
+{% endif %}
+{% endblock %}

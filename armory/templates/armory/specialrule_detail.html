@@ -1,0 +1,28 @@
+{% extends "armory/base.html" %}
+
+{% block title %}{{ special_rule.name }}{% endblock %}
+
+{% block content %}
+<h1>{{ special_rule.name }}</h1>
+
+{% if special_rule.description %}
+<p>{{ special_rule.description }}</p>
+{% endif %}
+
+<h2>Weapons</h2>
+{% if special_rule.weapons.all %}
+<ul>
+    {% for weapon in special_rule.weapons.all %}
+    <li><a href="{% url 'armory:weapon_detail' weapon.pk %}">{{ weapon.name }}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No weapons have this rule.</p>
+{% endif %}
+
+<p>
+    <a href="{% url 'armory:specialrule_update' special_rule.pk %}">Edit</a>
+    <a href="{% url 'armory:specialrule_delete' special_rule.pk %}">Delete</a>
+    <a href="{% url 'armory:specialrule_list' %}">Back to rules</a>
+</p>
+{% endblock %}
