@@ -9,8 +9,7 @@
 The weapon itself will not be deleted.</p>
 
 <form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn-delete">Remove link</button>
-    <a href="{% url 'armory:weapon_detail' weapon.pk %}" class="btn-cancel">Cancel</a>
+    {% url 'armory:weapon_detail' weapon.pk as cancel_url %}
+    {% include "armory/_delete_body.html" with cancel_url=cancel_url button_label="Remove link" %}
 </form>
 {% endblock %}

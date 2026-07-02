@@ -12,8 +12,7 @@
 {% endif %}
 
 <form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn-delete">Delete</button>
-    <a href="{% url 'armory:weapontype_list' %}" class="btn-cancel">Cancel</a>
+    {% url 'armory:weapontype_list' as cancel_url %}
+    {% include "armory/_delete_body.html" with cancel_url=cancel_url %}
 </form>
 {% endblock %}

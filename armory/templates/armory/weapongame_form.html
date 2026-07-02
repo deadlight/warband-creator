@@ -15,9 +15,7 @@
 {% endif %}
 
 <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Link</button>
-    <a href="{% url 'armory:weapon_detail' weapon.pk %}" class="btn-cancel">Cancel</a>
+    {% url 'armory:weapon_detail' weapon.pk as cancel_url %}
+    {% include "armory/_form_body.html" with cancel_url=cancel_url submit_label="Link" %}
 </form>
 {% endblock %}

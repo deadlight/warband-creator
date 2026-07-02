@@ -29,7 +29,7 @@
             <td><a href="{% url 'armory:game_detail' entry.game.pk %}">{{ entry.game.name }}</a></td>
             <td>{{ entry.cost|default:"&mdash;" }}</td>
             <td>
-                <a href="{% url 'armory:weapon_link_delete' weapon.pk entry.pk %}">Remove</a>
+                <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:weapon_link_delete' weapon.pk entry.pk %}" data-item-name="link to {{ entry.game.name }}" data-button-label="Remove">Remove</button>
             </td>
         </tr>
         {% endfor %}
@@ -76,14 +76,14 @@
                     &mdash;
                 {% endif %}
             </td>
-            <td style="color: #888;">{{ profile.suggested_cost }}</td>
+            <td class="suggested-cost">{{ profile.suggested_cost }}</td>
             <td class="actions">
                 <a href="{% url 'armory:weaponprofile_update' weapon.pk profile.pk %}">Edit</a>
-                <a href="{% url 'armory:weaponprofile_delete' weapon.pk profile.pk %}">Delete</a>
+                <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:weaponprofile_delete' weapon.pk profile.pk %}" data-item-name="{{ weapon.name }} profile{% if profile.name %} ({{ profile.name }}){% endif %}">Delete</button>
             </td>
         </tr>
         {% if profile.description %}
-        <tr><td colspan="10" style="font-size: 0.9em; color: #555; padding-top: 0;">{{ profile.description }}</td></tr>
+        <tr><td colspan="10" class="profile-description">{{ profile.description }}</td></tr>
         {% endif %}
         {% endfor %}
     </tbody>
@@ -103,7 +103,7 @@
 
 <p>
     <a href="{% url 'armory:weapon_update' weapon.pk %}">Edit</a>
-    <a href="{% url 'armory:weapon_delete' weapon.pk %}">Delete</a>
+    <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:weapon_delete' weapon.pk %}" data-item-name="{{ weapon.name }}">Delete</button>
     <a href="{% url 'armory:weapon_list' %}">Back to list</a>
 </p>
 {% endblock %}

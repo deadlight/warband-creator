@@ -21,7 +21,7 @@
             <td>{{ rule.weapons.count }}</td>
             <td class="actions">
                 <a href="{% url 'armory:specialrule_update' rule.pk %}">Edit</a>
-                <a href="{% url 'armory:specialrule_delete' rule.pk %}">Delete</a>
+                <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:specialrule_delete' rule.pk %}" data-item-name="{{ rule.name }}">Delete</button>
             </td>
         </tr>
         {% endfor %}

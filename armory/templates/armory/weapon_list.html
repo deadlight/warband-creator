@@ -5,54 +5,54 @@
 {% block content %}
 <h1>Weapons</h1>
 
-<form method="get" style="margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: flex-end;">
-    <p style="margin: 0;">
+<form method="get" class="filter-form">
+    <p>
         <label>Search</label>
-        <input type="text" name="search" value="{{ current_filters.search|default:'' }}" placeholder="Name..." style="width: auto; min-width: 120px;">
+        <input type="text" name="search" value="{{ current_filters.search|default:'' }}" placeholder="Name...">
     </p>
-    <p style="margin: 0;">
+    <p>
         <label>Type</label>
-        <select name="type" style="width: auto;">
+        <select name="type">
             <option value="">All</option>
             {% for wt in weapon_types %}
             <option value="{{ wt.pk }}" {% if current_filters.type == wt.pk|stringformat:"s" %}selected{% endif %}>{{ wt.name }}</option>
             {% endfor %}
         </select>
     </p>
-    <p style="margin: 0;">
+    <p>
         <label>Faction</label>
-        <select name="faction" style="width: auto;">
+        <select name="faction">
             <option value="">All</option>
             {% for f in factions %}
             <option value="{{ f.pk }}" {% if current_filters.faction == f.pk|stringformat:"s" %}selected{% endif %}>{{ f.name }}</option>
             {% endfor %}
         </select>
     </p>
-    <p style="margin: 0;">
+    <p>
         <label>Game</label>
-        <select name="game" style="width: auto;">
+        <select name="game">
             <option value="">All</option>
             {% for g in games %}
             <option value="{{ g.pk }}" {% if current_filters.game == g.pk|stringformat:"s" %}selected{% endif %}>{{ g.name }}</option>
             {% endfor %}
         </select>
     </p>
-    <p style="margin: 0;">
+    <p>
         <label>Close combat</label>
-        <select name="cc" style="width: auto;">
+        <select name="cc">
             <option value="">All</option>
             <option value="1" {% if current_filters.cc == '1' %}selected{% endif %}>Yes</option>
             <option value="0" {% if current_filters.cc == '0' %}selected{% endif %}>No</option>
         </select>
     </p>
-    <p style="margin: 0;">
+    <p>
         <label>Template</label>
-        <select name="template" style="width: auto;">
+        <select name="template">
             <option value="">All</option>
             <option value="1" {% if current_filters.template == '1' %}selected{% endif %}>Yes</option>
         </select>
     </p>
-    <p style="margin: 0;">
+    <p>
         <button type="submit">Filter</button>
         <a href="{% url 'armory:weapon_list' %}" class="btn-cancel">Clear</a>
     </p>
@@ -104,7 +104,7 @@
             </td>
             <td class="actions">
                 <a href="{% url 'armory:weapon_update' weapon.pk %}">Edit</a>
-                <a href="{% url 'armory:weapon_delete' weapon.pk %}">Delete</a>
+                <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:weapon_delete' weapon.pk %}" data-item-name="{{ weapon.name }}">Delete</button>
             </td>
         </tr>
         {% endfor %}
@@ -115,7 +115,7 @@
 {% endif %}
 
 {% if is_paginated %}
-<p style="text-align: center;">
+<p class="pagination">
     {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}{% for k,v in current_filters.items %}{% if k != 'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}">Prev</a>{% endif %}
     Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
     {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}{% for k,v in current_filters.items %}{% if k != 'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}">Next</a>{% endif %}

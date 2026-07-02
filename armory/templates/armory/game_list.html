@@ -21,7 +21,7 @@
             <td>{{ game.weapons.count }}</td>
             <td class="actions">
                 <a href="{% url 'armory:game_update' game.pk %}">Edit</a>
-                <a href="{% url 'armory:game_delete' game.pk %}">Delete</a>
+                <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:game_delete' game.pk %}" data-item-name="{{ game.name }}">Delete</button>
             </td>
         </tr>
         {% endfor %}

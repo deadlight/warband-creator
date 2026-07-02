@@ -6,9 +6,7 @@
 <h1>{% if member %}Edit "{{ member.display_name }}"{% else %}Add Member to "{{ warband.name }}"{% endif %}</h1>
 
 <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-    <a href="{% url 'warbands:warband_detail' warband.pk %}" class="btn-cancel">Cancel</a>
+    {% url 'warbands:warband_detail' warband.pk as cancel_url %}
+    {% include "armory/_form_body.html" with cancel_url=cancel_url %}
 </form>
 {% endblock %}

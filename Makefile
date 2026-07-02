@@ -1,4 +1,5 @@
 .PHONY: help up down restart build logs shell db-shell migrate makemigrations \
+        migrate-local makemigrations-local createsuperuser collectstatic collectstatic-local \
         test test-cov format lint pre-commit install hooks clean
 
 help: ## Show this help
@@ -40,6 +41,9 @@ makemigrations: ## Generate new migrations
 createsuperuser: ## Create a django superuser
 	docker compose exec web poetry run python manage.py createsuperuser
 
+collectstatic: ## Collect static files (docker)
+	docker compose exec web poetry run python manage.py collectstatic --noinput
+
 # ---- Local Django (without containers) ----
 
 run-local: ## Run django dev server locally
@@ -47,6 +51,12 @@ run-local: ## Run django dev server locally
 
 migrate-local: ## Run migrations locally
 	poetry run python manage.py migrate
+
+makemigrations-local: ## Generate migrations locally
+	poetry run python manage.py makemigrations
+
+collectstatic-local: ## Collect static files locally
+	poetry run python manage.py collectstatic --noinput
 
 # ---- Code Quality ----
 

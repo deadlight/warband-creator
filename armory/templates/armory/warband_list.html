@@ -25,7 +25,7 @@
             <td>{{ w.members.count }}</td>
             <td class="actions">
                 <a href="{% url 'warbands:warband_update' w.pk %}">Edit</a>
-                <a href="{% url 'warbands:warband_delete' w.pk %}">Delete</a>
+                <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'warbands:warband_delete' w.pk %}" data-item-name="{{ w.name }}">Delete</button>
             </td>
         </tr>
         {% endfor %}

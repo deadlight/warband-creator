@@ -49,7 +49,7 @@
             <td class="actions">
                 <a href="{% url 'warbands:warbandmemberweapon_create' warband.pk member.pk %}">Add weapon</a>
                 <a href="{% url 'warbands:warbandmember_update' warband.pk member.pk %}">Edit</a>
-                <a href="{% url 'warbands:warbandmember_delete' warband.pk member.pk %}">Remove</a>
+                <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'warbands:warbandmember_delete' warband.pk member.pk %}" data-item-name="{{ member.display_name }}" data-button-label="Remove">Remove</button>
             </td>
         </tr>
         {% endfor %}
@@ -65,7 +65,7 @@
 
 <p>
     <a href="{% url 'warbands:warband_update' warband.pk %}">Edit</a>
-    <a href="{% url 'warbands:warband_delete' warband.pk %}">Delete</a>
+    <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'warbands:warband_delete' warband.pk %}" data-item-name="{{ warband.name }}">Delete</button>
     <a href="{% url 'warbands:warband_list' %}">Back to warbands</a>
 </p>
 {% endblock %}

@@ -1,0 +1,4 @@
+{% csrf_token %}
+{{ form.as_p }}
+<button type="submit">{{ submit_label|default:"Save" }}</button>
+<a href="{{ cancel_url }}" class="btn-cancel">Cancel</a>

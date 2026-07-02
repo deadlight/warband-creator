@@ -22,7 +22,7 @@
 
 <p>
     <a href="{% url 'armory:specialrule_update' special_rule.pk %}">Edit</a>
-    <a href="{% url 'armory:specialrule_delete' special_rule.pk %}">Delete</a>
+    <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:specialrule_delete' special_rule.pk %}" data-item-name="{{ special_rule.name }}">Delete</button>
     <a href="{% url 'armory:specialrule_list' %}">Back to rules</a>
 </p>
 {% endblock %}

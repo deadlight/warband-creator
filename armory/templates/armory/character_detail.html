@@ -14,7 +14,7 @@
 {% endif %}
 
 <h2>Statline</h2>
-<p style="font-family: monospace; font-size: 1.1em;">{{ character.statline }}</p>
+<p class="statline">{{ character.statline }}</p>
 
 <table>
     <tr><th>M</th><td>{{ character.movement }}</td><td>Movement</td></tr>
@@ -56,7 +56,7 @@
 
 <p>
     <a href="{% url 'armory:character_update' character.pk %}">Edit</a>
-    <a href="{% url 'armory:character_delete' character.pk %}">Delete</a>
+    <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:character_delete' character.pk %}" data-item-name="{{ character.name }}">Delete</button>
     <a href="{% url 'armory:character_list' %}">Back to characters</a>
 </p>
 {% endblock %}

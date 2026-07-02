@@ -41,7 +41,7 @@
 
 <p>
     <a href="{% url 'armory:game_update' game.pk %}">Edit</a>
-    <a href="{% url 'armory:game_delete' game.pk %}">Delete</a>
+    <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:game_delete' game.pk %}" data-item-name="{{ game.name }}">Delete</button>
     <a href="{% url 'armory:game_list' %}">Back to games</a>
 </p>
 {% endblock %}
