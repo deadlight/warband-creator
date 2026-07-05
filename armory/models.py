@@ -398,11 +398,7 @@ class WarbandMember(models.Model):
 
     @property
     def total_cost(self):
-        weapon_cost = sum(
-            w.weapon_game.cost or 0
-            for w in self.weapons.select_related("weapon_game").all()
-            if w.weapon_game
-        )
+        weapon_cost = sum(w.weapon_game.cost or 0 for w in self.weapons.all() if w.weapon_game)
         return weapon_cost
 
 

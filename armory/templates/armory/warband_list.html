@@ -22,7 +22,7 @@
             <td><a href="{% url 'warbands:warband_detail' w.pk %}">{{ w.name }}</a></td>
             <td>{{ w.game.name }}</td>
             <td>{{ w.faction.name|default:"&mdash;" }}</td>
-            <td>{{ w.members.count }}</td>
+            <td>{{ w.member_count }}</td>
             <td class="actions">
                 <a href="{% url 'warbands:warband_update' w.pk %}">Edit</a>
                 <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'warbands:warband_delete' w.pk %}" data-item-name="{{ w.name }}">Delete</button>

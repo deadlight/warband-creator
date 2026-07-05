@@ -1,4 +1,4 @@
-from django.db.models import Prefetch
+from django.db.models import Count, Prefetch
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
@@ -86,7 +86,11 @@ class WeaponListView(ListView):
 class WeaponDetailView(DetailView):
     model = Weapon
     context_object_name = "weapon"
-    queryset = Weapon.objects.prefetch_related("profiles")
+
+    def get_queryset(self):
+        return Weapon.objects.prefetch_related(
+            "profiles", "weapon_games__game", "special_rules"
+        ).select_related("weapon_type", "faction")
 
 
 class WeaponCreateView(CreateView):
@@ -198,6 +202,16 @@ class GameDetailView(DetailView):
     model = Game
     context_object_name = "game"
 
+    def get_queryset(self):
+        return Game.objects.prefetch_related(
+            Prefetch(
+                "weapon_games",
+                queryset=WeaponGame.objects.select_related("weapon__weapon_type", "weapon__faction")
+                .prefetch_related("weapon__profiles", "weapon__special_rules")
+                .order_by("weapon__name"),
+            )
+        )
+
 
 class GameCreateView(CreateView):
     model = Game
@@ -291,10 +305,20 @@ class CharacterListView(ListView):
     model = Character
     context_object_name = "characters"
 
+    def get_queryset(self):
+        return Character.objects.prefetch_related(
+            "character_games__game", "faction", "weapon_types"
+        )
+
 
 class CharacterDetailView(DetailView):
     model = Character
     context_object_name = "character"
+
+    def get_queryset(self):
+        return Character.objects.prefetch_related(
+            "character_games__game", "weapon_types", "faction"
+        )
 
 
 class CharacterCreateView(CreateView):
@@ -320,7 +344,7 @@ class WarbandListView(ListView):
 
     def get_queryset(self):
         members_qs = WarbandMember.objects.order_by("order", "character__name")
-        return Warband.objects.prefetch_related(
+        return Warband.objects.annotate(member_count=Count("members")).prefetch_related(
             Prefetch("members", queryset=members_qs.select_related("character")),
             "game",
             "faction",
