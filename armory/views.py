@@ -469,8 +469,8 @@ class WarbandAddMemberAPI(LoginRequiredMixin, View):
 
 
 class WarbandAddWeaponAPI(LoginRequiredMixin, View):
-    def post(self, request, pk, member_pk):
-        warband = get_object_or_404(Warband, pk=pk, user=request.user)
+    def post(self, request, warband_pk, member_pk):
+        warband = get_object_or_404(Warband, pk=warband_pk, user=request.user)
         member = get_object_or_404(WarbandMember, pk=member_pk, warband=warband)
 
         import json
