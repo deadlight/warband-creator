@@ -1,5 +1,15 @@
 {% extends "armory/_form_base.html" %}
 
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <div class="breadcrumbs-content">
+        <a href="{% url 'armory:weapon_list' %}">Weapons</a>
+        <span class="separator">/</span>
+        <span class="current">{% if weapon %}Edit {{ weapon.name }}{% else %}New Weapon{% endif %}</span>
+    </div>
+</div>
+{% endblock %}
+
 {% block content %}
 <div class="page-header">
     <h1>{% if weapon %}Edit {{ weapon.name }}{% else %}New Weapon{% endif %}</h1>

@@ -1,5 +1,17 @@
 {% extends "armory/_delete_base.html" %}
 
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <div class="breadcrumbs-content">
+        <a href="{% url 'armory:weapon_list' %}">Weapons</a>
+        <span class="separator">/</span>
+        <a href="{% url 'armory:weapon_detail' weapon.pk %}">{{ weapon.name }}</a>
+        <span class="separator">/</span>
+        <span class="current">Delete Profile</span>
+    </div>
+</div>
+{% endblock %}
+
 {% block content %}
 <div class="page-header">
     <h1>Delete Profile</h1>

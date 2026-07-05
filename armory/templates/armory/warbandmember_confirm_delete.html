@@ -1,5 +1,17 @@
 {% extends "armory/_delete_base.html" %}
 
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <div class="breadcrumbs-content">
+        <a href="{% url 'warbands:warband_list' %}">Warbands</a>
+        <span class="separator">/</span>
+        <a href="{% url 'warbands:warband_detail' warband.pk %}">{{ warband.name }}</a>
+        <span class="separator">/</span>
+        <span class="current">Remove {{ object.display_name }}</span>
+    </div>
+</div>
+{% endblock %}
+
 {% block content %}
 <div class="page-header">
     <h1>Remove {{ object.display_name }}</h1>

@@ -115,11 +115,6 @@ class Weapon(models.Model):
         return profile.damage if profile else "—"
 
     @property
-    def save_modifier(self):
-        profile = self.primary_profile
-        return profile.save_modifier if profile else 0
-
-    @property
     def ammo_roll(self):
         profile = self.primary_profile
         return profile.ammo_roll if profile else "—"
@@ -138,12 +133,49 @@ class WeaponProfile(models.Model):
     to_hit_short = models.IntegerField()
     to_hit_long = models.IntegerField()
 
-    strength = models.CharField(max_length=10)
-    damage = models.CharField(max_length=10)
+    # Strength - structured fields
+    STRENGTH_TYPE_CHOICES = [
+        ("none", "—"),
+        ("number", "Number"),
+        ("dice", "Dice"),
+        ("user", "User"),
+        ("special", "Special"),
+    ]
+    strength_type = models.CharField(max_length=10, choices=STRENGTH_TYPE_CHOICES, default="none")
+    strength_value = models.IntegerField(null=True, blank=True, help_text="For Number type (1-10)")
+    strength_dice_expr = models.CharField(
+        max_length=10, blank=True, help_text="For Dice type (e.g., D6, 2D6, D6+2)"
+    )
+    strength_user_bonus = models.IntegerField(
+        null=True, blank=True, help_text="For User type (0 for User, 1-3 for User+1/2/3)"
+    )
+
+    # Damage - structured fields
+    DAMAGE_TYPE_CHOICES = [
+        ("none", "—"),
+        ("number", "Number"),
+        ("dice", "Dice"),
+        ("special", "Special"),
+    ]
+    damage_type = models.CharField(max_length=10, choices=DAMAGE_TYPE_CHOICES, default="none")
+    damage_value = models.IntegerField(null=True, blank=True, help_text="For Number type (1-2)")
+    damage_dice_expr = models.CharField(
+        max_length=10, blank=True, help_text="For Dice type (e.g., D, D3-D10, 2D6, 2D12)"
+    )
+
+    # Ammo Roll - structured fields
+    AMMO_TYPE_CHOICES = [
+        ("none", "—"),
+        ("target", "Target Number"),
+        ("auto", "Auto"),
+        ("special", "Special"),
+    ]
+    ammo_type = models.CharField(max_length=10, choices=AMMO_TYPE_CHOICES, default="none")
+    ammo_target = models.IntegerField(
+        null=True, blank=True, help_text="For Target type (2, 4, 6 for 2+/4+/6+)"
+    )
 
     save_modifier = models.IntegerField()
-
-    ammo_roll = models.CharField(max_length=10)
 
     description = models.TextField(blank=True)
 
@@ -158,6 +190,49 @@ class WeaponProfile(models.Model):
         if self.name:
             label += f" ({self.name})"
         return label
+
+    @property
+    def strength(self):
+        """Return strength as display string."""
+        if self.strength_type == "none":
+            return "—"
+        elif self.strength_type == "number":
+            return str(self.strength_value) if self.strength_value is not None else "—"
+        elif self.strength_type == "dice":
+            return self.strength_dice_expr or "D"
+        elif self.strength_type == "user":
+            if self.strength_user_bonus:
+                return f"User + {self.strength_user_bonus}"
+            return "User"
+        elif self.strength_type == "special":
+            return "special"
+        return "—"
+
+    @property
+    def damage(self):
+        """Return damage as display string."""
+        if self.damage_type == "none":
+            return "—"
+        elif self.damage_type == "number":
+            return str(self.damage_value) if self.damage_value is not None else "—"
+        elif self.damage_type == "dice":
+            return self.damage_dice_expr or "D"
+        elif self.damage_type == "special":
+            return "special"
+        return "—"
+
+    @property
+    def ammo_roll(self):
+        """Return ammo roll as display string."""
+        if self.ammo_type == "none":
+            return "—"
+        elif self.ammo_type == "target":
+            return f"{self.ammo_target}+" if self.ammo_target else "—"
+        elif self.ammo_type == "auto":
+            return "auto"
+        elif self.ammo_type == "special":
+            return "special"
+        return "—"
 
     @property
     def short_range(self):
@@ -189,7 +264,12 @@ class WeaponProfile(models.Model):
         w = self.weapon
         rules = set(w.special_rules.values_list("name", flat=True))
         wtype = w.weapon_type.name if w.weapon_type else "Basic"
-        is_power_cc = w.close_combat and not self._is_user_strength and self.strength_val >= 4
+        is_power_cc = (
+            w.close_combat
+            and self.strength_type != "user"
+            and self.strength_value
+            and self.strength_value >= 4
+        )
 
         # ---- base cost ----
         if wtype == "Pistol":
@@ -210,13 +290,13 @@ class WeaponProfile(models.Model):
             base = 20
 
         # ---- strength ----
-        if self._is_user_strength:
-            s_mod = self._user_bonus * 5
+        if self.strength_type == "user":
+            s_mod = (self.strength_user_bonus or 0) * 5
         elif is_power_cc:
-            sv = self.strength_val
+            sv = self.strength_value or 0
             s_mod = {4: 0, 5: 5, 6: 15, 8: 40}.get(sv, sv * 5)
         else:
-            sv = self.strength_val
+            sv = self.strength_value or 0
             s_mod = {3: 0, 4: 5, 5: 10, 6: 20, 7: 30, 8: 50}.get(sv, sv * 5)
 
         # ---- save modifier ----
@@ -268,26 +348,6 @@ class WeaponProfile(models.Model):
         rule_mod = sum(rule_costs.get(r, 0) for r in rules)
 
         return base + s_mod + sv_mod + rule_mod
-
-    @property
-    def _is_user_strength(self):
-        return "User" in self.strength
-
-    @property
-    def _user_bonus(self):
-        if not self._is_user_strength:
-            return 0
-        import re
-
-        m = re.search(r"User\s*\+\s*(\d+)", self.strength)
-        return int(m.group(1)) if m else 0
-
-    @property
-    def strength_val(self):
-        try:
-            return int(self.strength)
-        except (ValueError, TypeError):
-            return 0
 
 
 class WeaponGame(models.Model):
