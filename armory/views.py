@@ -1,7 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count, Prefetch
+from django.db.models import Count, Max, Prefetch
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
+from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 from django.views.generic.edit import BaseDeleteView
 
@@ -378,6 +380,119 @@ class WarbandDetailView(LoginRequiredMixin, DetailView):
             "game",
             "faction",
         )
+
+
+class WarbandBuilderView(LoginRequiredMixin, DetailView):
+    model = Warband
+    context_object_name = "warband"
+    template_name = "armory/warband_builder.html"
+
+    def get_queryset(self):
+        members_qs = WarbandMember.objects.order_by("order", "character__name")
+        return Warband.objects.filter(user=self.request.user).prefetch_related(
+            Prefetch(
+                "members",
+                queryset=members_qs.prefetch_related(
+                    "character",
+                    Prefetch(
+                        "weapons",
+                        queryset=WarbandMemberWeapon.objects.select_related(
+                            "weapon_game__weapon", "weapon_game__game"
+                        ),
+                    ),
+                ),
+            ),
+            "game",
+            "faction",
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        warband = self.object
+
+        # Get available characters (all characters for the warband's game)
+        context["available_characters"] = (
+            Character.objects.filter(character_games__game=warband.game)
+            .select_related("faction")
+            .distinct()
+            .order_by("name")
+        )
+
+        # Get available weapons (all weapon games for the warband's game)
+        context["available_weapons"] = (
+            WeaponGame.objects.filter(game=warband.game)
+            .select_related("weapon", "weapon__weapon_type", "weapon__faction")
+            .order_by("weapon__name")
+        )
+
+        return context
+
+
+class WarbandAddMemberAPI(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        warband = get_object_or_404(Warband, pk=pk, user=request.user)
+
+        import json
+
+        try:
+            data = json.loads(request.body)
+            character_id = data.get("character_id")
+        except (json.JSONDecodeError, ValueError):
+            character_id = request.POST.get("character_id")
+
+        if not character_id:
+            return JsonResponse({"success": False, "error": "Character ID required"}, status=400)
+
+        character = get_object_or_404(Character, pk=character_id)
+
+        # Check if character already in warband
+        if WarbandMember.objects.filter(warband=warband, character=character).exists():
+            return JsonResponse(
+                {"success": False, "error": "Character already in warband"}, status=400
+            )
+
+        # Get max order
+        max_order = (
+            WarbandMember.objects.filter(warband=warband).aggregate(max_order=Max("order"))[
+                "max_order"
+            ]
+            or 0
+        )
+
+        member = WarbandMember.objects.create(
+            warband=warband, character=character, order=max_order + 1
+        )
+
+        return JsonResponse(
+            {"success": True, "member_id": member.pk, "member_name": member.display_name}
+        )
+
+
+class WarbandAddWeaponAPI(LoginRequiredMixin, View):
+    def post(self, request, pk, member_pk):
+        warband = get_object_or_404(Warband, pk=pk, user=request.user)
+        member = get_object_or_404(WarbandMember, pk=member_pk, warband=warband)
+
+        import json
+
+        try:
+            data = json.loads(request.body)
+            weapon_game_id = data.get("weapon_game_id")
+        except (json.JSONDecodeError, ValueError):
+            weapon_game_id = request.POST.get("weapon_game_id")
+
+        if not weapon_game_id:
+            return JsonResponse({"success": False, "error": "Weapon game ID required"}, status=400)
+
+        weapon_game = get_object_or_404(WeaponGame, pk=weapon_game_id, game=warband.game)
+
+        # Check if weapon already assigned
+        if WarbandMemberWeapon.objects.filter(member=member, weapon_game=weapon_game).exists():
+            return JsonResponse({"success": False, "error": "Weapon already assigned"}, status=400)
+
+        WarbandMemberWeapon.objects.create(member=member, weapon_game=weapon_game)
+
+        return JsonResponse({"success": True, "weapon_name": weapon_game.weapon.name})
 
 
 class WarbandCreateView(LoginRequiredMixin, CreateView):

@@ -16,6 +16,7 @@
 <div class="page-header">
     <h1>{{ warband.name }}</h1>
     <div class="actions">
+        <a href="{% url 'warbands:warband_builder' warband.pk %}" class="btn btn-primary">Open Builder</a>
         <a href="{% url 'warbands:warband_update' warband.pk %}" class="btn btn-secondary">Edit</a>
         <button class="btn btn-danger js-delete-confirm" data-delete-url="{% url 'warbands:warband_delete' warband.pk %}" data-item-name="{{ warband.name }}">Delete</button>
     </div>
