@@ -4,30 +4,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Armory{% endblock %}</title>
+    <title>{% block title %}Wargear{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'armory/css/style.css' %}">
 </head>
 <body>
-    <nav>
-        <a href="{% url 'armory:weapon_list' %}">Weapons</a>
-        <a href="{% url 'armory:game_list' %}">Games</a>
-        <a href="{% url 'armory:weapontype_list' %}">Types</a>
-        <a href="{% url 'armory:specialrule_list' %}">Rules</a>
-        <a href="{% url 'armory:faction_list' %}">Factions</a>
-        <a href="{% url 'armory:character_list' %}">Characters</a>
-        <a href="{% url 'warbands:warband_list' %}">Warbands</a>
-        {% if user.is_authenticated %}
-            <span style="margin-left: 2rem;">{{ user.username }}</span>
-            <form method="post" action="{% url 'logout' %}" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn-delete-link">Logout</button>
-            </form>
-        {% else %}
-            <a href="{% url 'login' %}" style="margin-left: 2rem;">Login</a>
-        {% endif %}
-    </nav>
+    <header class="header">
+        <div class="header-content">
+            <a href="{% url 'armory:weapon_list' %}" class="logo">Wargear</a>
 
-    {% block content %}{% endblock %}
+            <nav class="nav">
+                <a href="{% url 'armory:weapon_list' %}">Weapons</a>
+                <a href="{% url 'armory:character_list' %}">Characters</a>
+                <a href="{% url 'warbands:warband_list' %}">Warbands</a>
+                <a href="{% url 'armory:game_list' %}">Games</a>
+                <a href="{% url 'armory:faction_list' %}">Factions</a>
+                <a href="{% url 'armory:weapontype_list' %}">Types</a>
+                <a href="{% url 'armory:specialrule_list' %}">Rules</a>
+            </nav>
+
+            <div class="user-menu">
+                {% if user.is_authenticated %}
+                    <span class="username">{{ user.username }}</span>
+                    <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-link">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn-link">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    {% block breadcrumbs %}{% endblock %}
+
+    <main class="main">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
 
     <div id="modal-overlay" class="modal-overlay">
         <div class="modal-dialog">
@@ -36,8 +57,8 @@
             <form id="modal-delete-form" method="post">
                 {% csrf_token %}
                 <div class="modal-actions">
-                    <button type="button" id="modal-cancel" class="btn-cancel-modal">Cancel</button>
-                    <button type="submit" class="btn-delete" id="modal-confirm">Delete</button>
+                    <button type="button" id="modal-cancel" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-danger" id="modal-confirm">Delete</button>
                 </div>
             </form>
         </div>

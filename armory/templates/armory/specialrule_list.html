@@ -2,35 +2,53 @@
 
 {% block title %}Special Rules{% endblock %}
 
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <div class="breadcrumbs-content">
+        <a href="{% url 'armory:specialrule_list' %}">Special Rules</a>
+    </div>
+</div>
+{% endblock %}
+
 {% block content %}
-<div style="display: flex; justify-content: space-between; align-items: center;">
+<div class="page-header">
     <h1>Special Rules</h1>
-    <a href="{% url 'armory:specialrule_create' %}" class="btn-primary">New Rule</a>
+    <a href="{% url 'armory:specialrule_create' %}" class="btn btn-primary">New Rule</a>
 </div>
 
 {% if special_rules %}
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Weapons</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for rule in special_rules %}
-        <tr>
-            <td><a href="{% url 'armory:specialrule_detail' rule.pk %}">{{ rule.name }}</a></td>
-            <td>{{ rule.weapons.count }}</td>
-            <td class="actions">
-                <a href="{% url 'armory:specialrule_update' rule.pk %}">Edit</a>
-                <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:specialrule_delete' rule.pk %}" data-item-name="{{ rule.name }}">Delete</button>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="card">
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Weapons</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rule in special_rules %}
+                <tr>
+                    <td><a href="{% url 'armory:specialrule_detail' rule.pk %}" class="action-link">{{ rule.name }}</a></td>
+                    <td>{{ rule.weapons.count }}</td>
+                    <td class="actions">
+                        <a href="{% url 'armory:specialrule_update' rule.pk %}" class="action-link">Edit</a>
+                        <button class="action-delete js-delete-confirm" data-delete-url="{% url 'armory:specialrule_delete' rule.pk %}" data-item-name="{{ rule.name }}">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% else %}
-<p>No special rules yet. <a href="{% url 'armory:specialrule_create' %}">Create one</a>.</p>
+<div class="card">
+    <div class="empty-state">
+        <h3>No special rules yet</h3>
+        <p>Get started by creating your first special rule.</p>
+        <a href="{% url 'armory:specialrule_create' %}" class="btn btn-primary">Create Rule</a>
+    </div>
+</div>
 {% endif %}
 {% endblock %}

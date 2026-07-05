@@ -2,70 +2,97 @@
 
 {% block title %}{{ warband.name }}{% endblock %}
 
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <div class="breadcrumbs-content">
+        <a href="{% url 'warbands:warband_list' %}">Warbands</a>
+        <span class="separator">/</span>
+        <span class="current">{{ warband.name }}</span>
+    </div>
+</div>
+{% endblock %}
+
 {% block content %}
-<h1>{{ warband.name }}</h1>
+<div class="page-header">
+    <h1>{{ warband.name }}</h1>
+    <div class="actions">
+        <a href="{% url 'warbands:warband_update' warband.pk %}" class="btn btn-secondary">Edit</a>
+        <button class="btn btn-danger js-delete-confirm" data-delete-url="{% url 'warbands:warband_delete' warband.pk %}" data-item-name="{{ warband.name }}">Delete</button>
+    </div>
+</div>
 
-{% if warband.description %}
-<p>{{ warband.description }}</p>
-{% endif %}
-
-<p><strong>Game:</strong> {{ warband.game.name }}</p>
-{% if warband.faction %}
-<p><strong>Faction:</strong> {{ warband.faction.name }}</p>
-{% endif %}
-
-<h2>Members ({{ warband.members.count }})</h2>
-
-{% if warband.members.all %}
-<table>
-    <thead>
-        <tr>
-            <th>Order</th>
-            <th>Name</th>
-            <th>Character</th>
-            <th>Faction</th>
-            <th>Weapons</th>
-            <th>Weapon Cost</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for member in warband.members.all %}
-        <tr>
-            <td>{{ member.order }}</td>
-            <td>{{ member.display_name }}</td>
-            <td>
-                <a href="{% url 'armory:character_detail' member.character.pk %}">{{ member.character.name }}</a>
-            </td>
-            <td>{{ member.character.faction.name|default:"&mdash;" }}</td>
-            <td>
-                {% for mw in member.weapons.all %}
-                    {{ mw.weapon_game.weapon.name }}{% if not forloop.last %}, {% endif %}
-                {% empty %}
-                    &mdash;
-                {% endfor %}
-            </td>
-            <td>{{ member.total_cost|default:"&mdash;" }}</td>
-            <td class="actions">
-                <a href="{% url 'warbands:warbandmemberweapon_create' warband.pk member.pk %}">Add weapon</a>
-                <a href="{% url 'warbands:warbandmember_update' warband.pk member.pk %}">Edit</a>
-                <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'warbands:warbandmember_delete' warband.pk member.pk %}" data-item-name="{{ member.display_name }}" data-button-label="Remove">Remove</button>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% if warband.description or warband.faction %}
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-body">
+        <p><strong>Game:</strong> {{ warband.game.name }}</p>
+        {% if warband.faction %}
+            <p><strong>Faction:</strong> {{ warband.faction.name }}</p>
+        {% endif %}
+        {% if warband.description %}
+            <p>{{ warband.description }}</p>
+        {% endif %}
+    </div>
+</div>
 {% else %}
-<p>No members yet.</p>
+<p><strong>Game:</strong> {{ warband.game.name }}</p>
 {% endif %}
 
-<p>
-    <a href="{% url 'warbands:warbandmember_create' warband.pk %}">Add member</a>
-</p>
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-header">
+        <h2 style="margin: 0; font-size: 1.125rem;">Members ({{ warband.members.count }})</h2>
+    </div>
+    {% if warband.members.all %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Order</th>
+                    <th>Name</th>
+                    <th>Character</th>
+                    <th>Faction</th>
+                    <th>Weapons</th>
+                    <th>Weapon Cost</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in warband.members.all %}
+                <tr>
+                    <td>{{ member.order }}</td>
+                    <td>{{ member.display_name }}</td>
+                    <td>
+                        <a href="{% url 'armory:character_detail' member.character.pk %}" class="action-link">{{ member.character.name }}</a>
+                    </td>
+                    <td>{{ member.character.faction.name|default:"—" }}</td>
+                    <td>
+                        {% for mw in member.weapons.all %}
+                            {{ mw.weapon_game.weapon.name }}{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            —
+                        {% endfor %}
+                    </td>
+                    <td>{{ member.total_cost|default:"—" }}</td>
+                    <td class="actions">
+                        <a href="{% url 'warbands:warbandmemberweapon_create' warband.pk member.pk %}" class="action-link">Add weapon</a>
+                        <a href="{% url 'warbands:warbandmember_update' warband.pk member.pk %}" class="action-link">Edit</a>
+                        <button class="action-delete js-delete-confirm" data-delete-url="{% url 'warbands:warbandmember_delete' warband.pk member.pk %}" data-item-name="{{ member.display_name }}" data-button-label="Remove">Remove</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="card-body">
+        <p>No members yet.</p>
+    </div>
+    {% endif %}
+    <div class="card-body" style="border-top: 1px solid var(--color-border);">
+        <a href="{% url 'warbands:warbandmember_create' warband.pk %}" class="btn btn-secondary">Add Member</a>
+    </div>
+</div>
 
-<p>
-    <a href="{% url 'warbands:warband_update' warband.pk %}">Edit</a>
-    <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'warbands:warband_delete' warband.pk %}" data-item-name="{{ warband.name }}">Delete</button>
-    <a href="{% url 'warbands:warband_list' %}">Back to warbands</a>
-</p>
+<div style="margin-top: 1.5rem;">
+    <a href="{% url 'warbands:warband_list' %}" class="btn btn-secondary">Back to Warbands</a>
+</div>
 {% endblock %}

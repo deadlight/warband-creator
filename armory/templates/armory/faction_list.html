@@ -2,35 +2,53 @@
 
 {% block title %}Factions{% endblock %}
 
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <div class="breadcrumbs-content">
+        <a href="{% url 'armory:faction_list' %}">Factions</a>
+    </div>
+</div>
+{% endblock %}
+
 {% block content %}
-<div style="display: flex; justify-content: space-between; align-items: center;">
+<div class="page-header">
     <h1>Factions</h1>
-    <a href="{% url 'armory:faction_create' %}" class="btn-primary">New Faction</a>
+    <a href="{% url 'armory:faction_create' %}" class="btn btn-primary">New Faction</a>
 </div>
 
 {% if factions %}
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Weapons</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for faction in factions %}
-        <tr>
-            <td>{{ faction.name }}</td>
-            <td>{{ faction.weapons.count }}</td>
-            <td class="actions">
-                <a href="{% url 'armory:faction_update' faction.pk %}">Edit</a>
-                <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:faction_delete' faction.pk %}" data-item-name="{{ faction.name }}">Delete</button>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="card">
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Weapons</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for faction in factions %}
+                <tr>
+                    <td>{{ faction.name }}</td>
+                    <td>{{ faction.weapons.count }}</td>
+                    <td class="actions">
+                        <a href="{% url 'armory:faction_update' faction.pk %}" class="action-link">Edit</a>
+                        <button class="action-delete js-delete-confirm" data-delete-url="{% url 'armory:faction_delete' faction.pk %}" data-item-name="{{ faction.name }}">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% else %}
-<p>No factions yet. <a href="{% url 'armory:faction_create' %}">Create one</a>.</p>
+<div class="card">
+    <div class="empty-state">
+        <h3>No factions yet</h3>
+        <p>Get started by creating your first faction.</p>
+        <a href="{% url 'armory:faction_create' %}" class="btn btn-primary">Create Faction</a>
+    </div>
+</div>
 {% endif %}
 {% endblock %}

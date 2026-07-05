@@ -2,39 +2,57 @@
 
 {% block title %}Warbands{% endblock %}
 
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <div class="breadcrumbs-content">
+        <a href="{% url 'warbands:warband_list' %}">Warbands</a>
+    </div>
+</div>
+{% endblock %}
+
 {% block content %}
-<div style="display: flex; justify-content: space-between; align-items: center;">
+<div class="page-header">
     <h1>Warbands</h1>
-    <a href="{% url 'warbands:warband_create' %}" class="btn-primary">New Warband</a>
+    <a href="{% url 'warbands:warband_create' %}" class="btn btn-primary">New Warband</a>
 </div>
 
 {% if warbands %}
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Game</th>
-            <th>Faction</th>
-            <th>Members</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for w in warbands %}
-        <tr>
-            <td><a href="{% url 'warbands:warband_detail' w.pk %}">{{ w.name }}</a></td>
-            <td>{{ w.game.name }}</td>
-            <td>{{ w.faction.name|default:"&mdash;" }}</td>
-            <td>{{ w.member_count }}</td>
-            <td class="actions">
-                <a href="{% url 'warbands:warband_update' w.pk %}">Edit</a>
-                <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'warbands:warband_delete' w.pk %}" data-item-name="{{ w.name }}">Delete</button>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="card">
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Game</th>
+                    <th>Faction</th>
+                    <th>Members</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for w in warbands %}
+                <tr>
+                    <td><a href="{% url 'warbands:warband_detail' w.pk %}" class="action-link">{{ w.name }}</a></td>
+                    <td>{{ w.game.name }}</td>
+                    <td>{{ w.faction.name|default:"—" }}</td>
+                    <td>{{ w.member_count }}</td>
+                    <td class="actions">
+                        <a href="{% url 'warbands:warband_update' w.pk %}" class="action-link">Edit</a>
+                        <button class="action-delete js-delete-confirm" data-delete-url="{% url 'warbands:warband_delete' w.pk %}" data-item-name="{{ w.name }}">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% else %}
-<p>No warbands yet. <a href="{% url 'warbands:warband_create' %}">Create one</a>.</p>
+<div class="card">
+    <div class="empty-state">
+        <h3>No warbands yet</h3>
+        <p>Get started by creating your first warband.</p>
+        <a href="{% url 'warbands:warband_create' %}" class="btn btn-primary">Create Warband</a>
+    </div>
+</div>
 {% endif %}
 {% endblock %}

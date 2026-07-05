@@ -1,21 +1,83 @@
 {% extends "armory/base.html" %}
 
-{% block title %}Link {{ weapon.name }} to game{% endblock %}
+{% block title %}Link to Game{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <div class="breadcrumbs-content">
+        <a href="{% url 'armory:weapon_list' %}">Weapons</a>
+        <span class="separator">/</span>
+        <a href="{% url 'armory:weapon_detail' weapon.pk %}">{{ weapon.name }}</a>
+        <span class="separator">/</span>
+        <span class="current">Link to Game</span>
+    </div>
+</div>
+{% endblock %}
 
 {% block content %}
-<h1>Link "{{ weapon.name }}" to a game</h1>
+<div class="page-header">
+    <h1>Link {{ weapon.name }} to a Game</h1>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+
+            {% if form.errors %}
+                <div class="messages">
+                    <li class="error">Please correct the errors below.</li>
+                </div>
+            {% endif %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <div class="form-helptext">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% if field.errors %}
+                        <ul class="form-error">
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <div class="actions" style="margin-top: 1.5rem;">
+                <button type="submit" class="btn btn-primary">Link</button>
+                <a href="{% url 'armory:weapon_detail' weapon.pk %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
 
 {% if existing_links %}
-<h2>Existing links</h2>
-<ul>
-    {% for entry in existing_links %}
-    <li>{{ entry.game.name }}{% if entry.cost is not None %} ({{ entry.cost }} pts){% endif %}</li>
-    {% endfor %}
-</ul>
+<div class="card" style="margin-top: 1.5rem;">
+    <div class="card-header">
+        <h2 style="margin: 0; font-size: 1.125rem;">Current Links</h2>
+    </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Game</th>
+                    <th>Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for link in existing_links %}
+                <tr>
+                    <td>{{ link.game.name }}</td>
+                    <td>{{ link.cost|default:"—" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endif %}
-
-<form method="post">
-    {% url 'armory:weapon_detail' weapon.pk as cancel_url %}
-    {% include "armory/_form_body.html" with cancel_url=cancel_url submit_label="Link" %}
-</form>
 {% endblock %}

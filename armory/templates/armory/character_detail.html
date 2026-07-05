@@ -2,61 +2,93 @@
 
 {% block title %}{{ character.name }}{% endblock %}
 
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <div class="breadcrumbs-content">
+        <a href="{% url 'armory:character_list' %}">Characters</a>
+        <span class="separator">/</span>
+        <span class="current">{{ character.name }}</span>
+    </div>
+</div>
+{% endblock %}
+
 {% block content %}
-<h1>{{ character.name }}</h1>
+<div class="page-header">
+    <h1>{{ character.name }}</h1>
+    <div class="actions">
+        <a href="{% url 'armory:character_update' character.pk %}" class="btn btn-secondary">Edit</a>
+        <button class="btn btn-danger js-delete-confirm" data-delete-url="{% url 'armory:character_delete' character.pk %}" data-item-name="{{ character.name }}">Delete</button>
+    </div>
+</div>
 
-{% if character.faction %}
-<p><strong>Faction:</strong> {{ character.faction.name }}</p>
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-header">
+        <h2 style="margin: 0; font-size: 1.125rem;">Statline</h2>
+    </div>
+    <div class="card-body">
+        <p style="font-family: monospace; font-size: 1.125rem; margin: 0;">{{ character.statline }}</p>
+    </div>
+</div>
+
+{% if character.faction or character.description %}
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-body">
+        {% if character.faction %}
+            <p><strong>Faction:</strong> {{ character.faction.name }}</p>
+        {% endif %}
+        {% if character.description %}
+            <p>{{ character.description }}</p>
+        {% endif %}
+    </div>
+</div>
 {% endif %}
 
-{% if character.description %}
-<p>{{ character.description }}</p>
-{% endif %}
-
-<h2>Statline</h2>
-<p class="statline">{{ character.statline }}</p>
-
-<table>
-    <tr><th>M</th><td>{{ character.movement }}</td><td>Movement</td></tr>
-    <tr><th>WS</th><td>{{ character.weapon_skill }}</td><td>Weapon Skill</td></tr>
-    <tr><th>BS</th><td>{{ character.ballistic_skill }}</td><td>Ballistic Skill</td></tr>
-    <tr><th>S</th><td>{{ character.strength }}</td><td>Strength</td></tr>
-    <tr><th>T</th><td>{{ character.toughness }}</td><td>Toughness</td></tr>
-    <tr><th>W</th><td>{{ character.wounds }}</td><td>Wounds</td></tr>
-    <tr><th>I</th><td>{{ character.initiative }}</td><td>Initiative</td></tr>
-    <tr><th>A</th><td>{{ character.attacks }}</td><td>Attacks</td></tr>
-    <tr><th>Ld</th><td>{{ character.leadership }}</td><td>Leadership</td></tr>
-</table>
-
-<h2>Games &amp; Costs</h2>
-{% if character.character_games.all %}
-<table>
-    <thead><tr><th>Game</th><th>Recruitment Cost</th></tr></thead>
-    <tbody>
-    {% for entry in character.character_games.all %}
-    <tr>
-        <td>{{ entry.game.name }}</td>
-        <td>{{ entry.cost|default:"&mdash;" }}</td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p>Not linked to any game yet.</p>
-{% endif %}
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-header">
+        <h2 style="margin: 0; font-size: 1.125rem;">Games &amp; Costs</h2>
+    </div>
+    {% if character.character_games.all %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Game</th>
+                    <th>Recruitment Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in character.character_games.all %}
+                <tr>
+                    <td>{{ entry.game.name }}</td>
+                    <td>{{ entry.cost|default:"—" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="card-body">
+        <p>Not linked to any game yet.</p>
+    </div>
+    {% endif %}
+</div>
 
 {% if character.weapon_types.all %}
-<h2>Available Weapon Types</h2>
-<ul>
-    {% for wt in character.weapon_types.all %}
-    <li>{{ wt.name }}</li>
-    {% endfor %}
-</ul>
+<div class="card">
+    <div class="card-header">
+        <h2 style="margin: 0; font-size: 1.125rem;">Available Weapon Types</h2>
+    </div>
+    <div class="card-body">
+        <ul style="margin: 0; padding-left: 1.5rem;">
+            {% for wt in character.weapon_types.all %}
+                <li>{{ wt.name }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
 {% endif %}
 
-<p>
-    <a href="{% url 'armory:character_update' character.pk %}">Edit</a>
-    <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:character_delete' character.pk %}" data-item-name="{{ character.name }}">Delete</button>
-    <a href="{% url 'armory:character_list' %}">Back to characters</a>
-</p>
+<div style="margin-top: 1.5rem;">
+    <a href="{% url 'armory:character_list' %}" class="btn btn-secondary">Back to Characters</a>
+</div>
 {% endblock %}

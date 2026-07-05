@@ -2,27 +2,66 @@
 
 {% block title %}{{ special_rule.name }}{% endblock %}
 
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <div class="breadcrumbs-content">
+        <a href="{% url 'armory:specialrule_list' %}">Special Rules</a>
+        <span class="separator">/</span>
+        <span class="current">{{ special_rule.name }}</span>
+    </div>
+</div>
+{% endblock %}
+
 {% block content %}
-<h1>{{ special_rule.name }}</h1>
+<div class="page-header">
+    <h1>{{ special_rule.name }}</h1>
+    <div class="actions">
+        <a href="{% url 'armory:specialrule_update' special_rule.pk %}" class="btn btn-secondary">Edit</a>
+        <button class="btn btn-danger js-delete-confirm" data-delete-url="{% url 'armory:specialrule_delete' special_rule.pk %}" data-item-name="{{ special_rule.name }}">Delete</button>
+    </div>
+</div>
 
 {% if special_rule.description %}
-<p>{{ special_rule.description }}</p>
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-body">
+        <p>{{ special_rule.description }}</p>
+    </div>
+</div>
 {% endif %}
 
-<h2>Weapons</h2>
-{% if special_rule.weapons.all %}
-<ul>
-    {% for weapon in special_rule.weapons.all %}
-    <li><a href="{% url 'armory:weapon_detail' weapon.pk %}">{{ weapon.name }}</a></li>
-    {% endfor %}
-</ul>
-{% else %}
-<p>No weapons have this rule.</p>
-{% endif %}
+<div class="card">
+    <div class="card-header">
+        <h2 style="margin: 0; font-size: 1.125rem;">Weapons with this Rule</h2>
+    </div>
+    {% if special_rule.weapons.all %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Faction</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for weapon in special_rule.weapons.all %}
+                <tr>
+                    <td><a href="{% url 'armory:weapon_detail' weapon.pk %}" class="action-link">{{ weapon.name }}</a></td>
+                    <td>{{ weapon.weapon_type.name|default:"—" }}</td>
+                    <td>{{ weapon.faction.name|default:"—" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="card-body">
+        <p>No weapons have this rule yet.</p>
+    </div>
+    {% endif %}
+</div>
 
-<p>
-    <a href="{% url 'armory:specialrule_update' special_rule.pk %}">Edit</a>
-    <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:specialrule_delete' special_rule.pk %}" data-item-name="{{ special_rule.name }}">Delete</button>
-    <a href="{% url 'armory:specialrule_list' %}">Back to rules</a>
-</p>
+<div style="margin-top: 1.5rem;">
+    <a href="{% url 'armory:specialrule_list' %}" class="btn btn-secondary">Back to Special Rules</a>
+</div>
 {% endblock %}

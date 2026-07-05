@@ -1,15 +1,22 @@
-{% extends "armory/base.html" %}
-
-{% block title %}Remove link for {{ weapon.name }}{% endblock %}
+{% extends "armory/_delete_base.html" %}
 
 {% block content %}
-<h1>Remove "{{ weapon.name }}" from "{{ object.game.name }}"?</h1>
+<div class="page-header">
+    <h1>Remove Game Link</h1>
+</div>
 
-<p>This will unlink the weapon from this game and remove its cost ({{ object.cost|default:"none" }} pts).
-The weapon itself will not be deleted.</p>
+<div class="card">
+    <div class="card-body">
+        <p>Are you sure you want to remove the link to "{{ object.game.name }}" from this weapon?</p>
+        <p style="color: var(--color-text-light);">This action cannot be undone.</p>
 
-<form method="post">
-    {% url 'armory:weapon_detail' weapon.pk as cancel_url %}
-    {% include "armory/_delete_body.html" with cancel_url=cancel_url button_label="Remove link" %}
-</form>
+        <form method="post">
+            {% csrf_token %}
+            <div class="actions" style="margin-top: 1.5rem;">
+                <button type="submit" class="btn btn-danger">Remove</button>
+                <a href="{% url 'armory:weapon_detail' weapon.pk %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}

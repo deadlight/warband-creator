@@ -2,108 +2,155 @@
 
 {% block title %}{{ weapon.name }}{% endblock %}
 
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <div class="breadcrumbs-content">
+        <a href="{% url 'armory:weapon_list' %}">Weapons</a>
+        <span class="separator">/</span>
+        <span class="current">{{ weapon.name }}</span>
+    </div>
+</div>
+{% endblock %}
+
 {% block content %}
-<h1>{{ weapon.name }}</h1>
+<div class="page-header">
+    <h1>{{ weapon.name }}</h1>
+    <div class="actions">
+        <a href="{% url 'armory:weapon_update' weapon.pk %}" class="btn btn-secondary">Edit</a>
+        <button class="btn btn-danger js-delete-confirm" data-delete-url="{% url 'armory:weapon_delete' weapon.pk %}" data-item-name="{{ weapon.name }}">Delete</button>
+    </div>
+</div>
 
-{% if weapon.weapon_type %}
-<p><strong>Type:</strong> {{ weapon.weapon_type.name }}</p>
-{% endif %}
-
-{% if weapon.description %}
-<p>{{ weapon.description }}</p>
-{% endif %}
-
-<h2>Game costs</h2>
-{% if weapon.weapon_games.all %}
-<table>
-    <thead>
-        <tr>
-            <th>Game</th>
-            <th>Cost</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for entry in weapon.weapon_games.all %}
-        <tr>
-            <td><a href="{% url 'armory:game_detail' entry.game.pk %}">{{ entry.game.name }}</a></td>
-            <td>{{ entry.cost|default:"&mdash;" }}</td>
-            <td>
-                <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:weapon_link_delete' weapon.pk entry.pk %}" data-item-name="link to {{ entry.game.name }}" data-button-label="Remove">Remove</button>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p>Not linked to any game yet.</p>
-{% endif %}
-<p><a href="{% url 'armory:weapon_link_create' weapon.pk %}">Link to a game</a></p>
-
-<h2>Profiles</h2>
-{% if weapon.profiles.all %}
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Short Range</th>
-            <th>Long Range</th>
-            <th>To Hit (S/L)</th>
-            <th>Str</th>
-            <th>Dmg</th>
-            <th>Save</th>
-            <th>Ammo</th>
-            <th>Cost</th>
-            <th>Suggested</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for profile in weapon.profiles.all %}
-        <tr>
-            <td>{{ profile.name|default:"Default" }}</td>
-            <td>{{ profile.short_range }}"</td>
-            <td>{{ profile.long_range }}"</td>
-            <td>{{ profile.to_hit_short_display }} / {{ profile.to_hit_long_display }}</td>
-            <td>{{ profile.strength }}</td>
-            <td>{{ profile.damage }}</td>
-            <td>{{ profile.save_modifier }}</td>
-            <td>{{ profile.ammo_roll }}</td>
-            <td>
-                {% if profile.cost is not None %}
-                    {{ profile.cost }}{% if profile.per_shot %}/shot{% endif %}
-                {% else %}
-                    &mdash;
-                {% endif %}
-            </td>
-            <td class="suggested-cost">{{ profile.suggested_cost }}</td>
-            <td class="actions">
-                <a href="{% url 'armory:weaponprofile_update' weapon.pk profile.pk %}">Edit</a>
-                <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:weaponprofile_delete' weapon.pk profile.pk %}" data-item-name="{{ weapon.name }} profile{% if profile.name %} ({{ profile.name }}){% endif %}">Delete</button>
-            </td>
-        </tr>
-        {% if profile.description %}
-        <tr><td colspan="10" class="profile-description">{{ profile.description }}</td></tr>
+{% if weapon.weapon_type or weapon.description %}
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-body">
+        {% if weapon.weapon_type %}
+            <p><strong>Type:</strong> {{ weapon.weapon_type.name }}</p>
         {% endif %}
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p>No profiles yet.</p>
+        {% if weapon.description %}
+            <p>{{ weapon.description }}</p>
+        {% endif %}
+    </div>
+</div>
 {% endif %}
-<p><a href="{% url 'armory:weaponprofile_create' weapon.pk %}">Add profile</a></p>
+
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-header">
+        <h2 style="margin: 0; font-size: 1.125rem;">Game Costs</h2>
+    </div>
+    {% if weapon.weapon_games.all %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Game</th>
+                    <th>Cost</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in weapon.weapon_games.all %}
+                <tr>
+                    <td><a href="{% url 'armory:game_detail' entry.game.pk %}" class="action-link">{{ entry.game.name }}</a></td>
+                    <td>{{ entry.cost|default:"—" }}</td>
+                    <td class="actions">
+                        <button class="action-delete js-delete-confirm" data-delete-url="{% url 'armory:weapon_link_delete' weapon.pk entry.pk %}" data-item-name="link to {{ entry.game.name }}" data-button-label="Remove">Remove</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="card-body">
+        <p>Not linked to any game yet.</p>
+    </div>
+    {% endif %}
+    <div class="card-body" style="border-top: 1px solid var(--color-border);">
+        <a href="{% url 'armory:weapon_link_create' weapon.pk %}" class="btn btn-secondary">Link to a Game</a>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-header">
+        <h2 style="margin: 0; font-size: 1.125rem;">Profiles</h2>
+    </div>
+    {% if weapon.profiles.all %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Short Range</th>
+                    <th>Long Range</th>
+                    <th>To Hit (S/L)</th>
+                    <th>Str</th>
+                    <th>Dmg</th>
+                    <th>Save</th>
+                    <th>Ammo</th>
+                    <th>Cost</th>
+                    <th>Suggested</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for profile in weapon.profiles.all %}
+                <tr>
+                    <td>{{ profile.name|default:"Default" }}</td>
+                    <td>{{ profile.short_range }}"</td>
+                    <td>{{ profile.long_range }}"</td>
+                    <td>{{ profile.to_hit_short_display }} / {{ profile.to_hit_long_display }}</td>
+                    <td>{{ profile.strength }}</td>
+                    <td>{{ profile.damage }}</td>
+                    <td>{{ profile.save_modifier }}</td>
+                    <td>{{ profile.ammo_roll }}</td>
+                    <td>
+                        {% if profile.cost is not None %}
+                            {{ profile.cost }}{% if profile.per_shot %}/shot{% endif %}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td style="color: var(--color-text-light);">{{ profile.suggested_cost }}</td>
+                    <td class="actions">
+                        <a href="{% url 'armory:weaponprofile_update' weapon.pk profile.pk %}" class="action-link">Edit</a>
+                        <button class="action-delete js-delete-confirm" data-delete-url="{% url 'armory:weaponprofile_delete' weapon.pk profile.pk %}" data-item-name="{{ weapon.name }} profile{% if profile.name %} ({{ profile.name }}){% endif %}">Delete</button>
+                    </td>
+                </tr>
+                {% if profile.description %}
+                <tr>
+                    <td colspan="11" style="padding-left: 2rem; color: var(--color-text-light); font-size: 0.875rem;">{{ profile.description }}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="card-body">
+        <p>No profiles yet.</p>
+    </div>
+    {% endif %}
+    <div class="card-body" style="border-top: 1px solid var(--color-border);">
+        <a href="{% url 'armory:weaponprofile_create' weapon.pk %}" class="btn btn-secondary">Add Profile</a>
+    </div>
+</div>
 
 {% if weapon.special_rules.all %}
-<h2>Special Rules</h2>
-{% for rule in weapon.special_rules.all %}
-<h3>{{ rule.name }}</h3>
-{% if rule.description %}<p>{{ rule.description }}</p>{% endif %}
-{% endfor %}
+<div class="card">
+    <div class="card-header">
+        <h2 style="margin: 0; font-size: 1.125rem;">Special Rules</h2>
+    </div>
+    <div class="card-body">
+        {% for rule in weapon.special_rules.all %}
+            <h3 style="margin: 0 0 0.5rem; font-size: 1rem;">{{ rule.name }}</h3>
+            {% if rule.description %}<p style="margin: 0 0 1rem;">{{ rule.description }}</p>{% endif %}
+        {% endfor %}
+    </div>
+</div>
 {% endif %}
 
-<p>
-    <a href="{% url 'armory:weapon_update' weapon.pk %}">Edit</a>
-    <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:weapon_delete' weapon.pk %}" data-item-name="{{ weapon.name }}">Delete</button>
-    <a href="{% url 'armory:weapon_list' %}">Back to list</a>
-</p>
+<div style="margin-top: 1.5rem;">
+    <a href="{% url 'armory:weapon_list' %}" class="btn btn-secondary">Back to Weapons</a>
+</div>
 {% endblock %}

@@ -2,126 +2,143 @@
 
 {% block title %}Weapons{% endblock %}
 
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <div class="breadcrumbs-content">
+        <a href="{% url 'armory:weapon_list' %}">Weapons</a>
+    </div>
+</div>
+{% endblock %}
+
 {% block content %}
-<div style="display: flex; justify-content: space-between; align-items: center;">
+<div class="page-header">
     <h1>Weapons</h1>
-    <a href="{% url 'armory:weapon_create' %}" class="btn-primary">New Weapon</a>
+    <a href="{% url 'armory:weapon_create' %}" class="btn btn-primary">New Weapon</a>
 </div>
 
 <form method="get" class="filter-form">
-    <p>
-        <label>Search</label>
-        <input type="text" name="search" value="{{ current_filters.search|default:'' }}" placeholder="Name...">
-    </p>
-    <p>
-        <label>Type</label>
-        <select name="type">
+    <div class="form-group">
+        <label class="form-label">Search</label>
+        <input type="text" name="search" class="form-input" value="{{ current_filters.search|default:'' }}" placeholder="Name...">
+    </div>
+    <div class="form-group">
+        <label class="form-label">Type</label>
+        <select name="type" class="form-select">
             <option value="">All</option>
             {% for wt in weapon_types %}
             <option value="{{ wt.pk }}" {% if current_filters.type == wt.pk|stringformat:"s" %}selected{% endif %}>{{ wt.name }}</option>
             {% endfor %}
         </select>
-    </p>
-    <p>
-        <label>Faction</label>
-        <select name="faction">
+    </div>
+    <div class="form-group">
+        <label class="form-label">Faction</label>
+        <select name="faction" class="form-select">
             <option value="">All</option>
             {% for f in factions %}
             <option value="{{ f.pk }}" {% if current_filters.faction == f.pk|stringformat:"s" %}selected{% endif %}>{{ f.name }}</option>
             {% endfor %}
         </select>
-    </p>
-    <p>
-        <label>Game</label>
-        <select name="game">
+    </div>
+    <div class="form-group">
+        <label class="form-label">Game</label>
+        <select name="game" class="form-select">
             <option value="">All</option>
             {% for g in games %}
             <option value="{{ g.pk }}" {% if current_filters.game == g.pk|stringformat:"s" %}selected{% endif %}>{{ g.name }}</option>
             {% endfor %}
         </select>
-    </p>
-    <p>
-        <label>Close combat</label>
-        <select name="cc">
+    </div>
+    <div class="form-group">
+        <label class="form-label">Close combat</label>
+        <select name="cc" class="form-select">
             <option value="">All</option>
             <option value="1" {% if current_filters.cc == '1' %}selected{% endif %}>Yes</option>
             <option value="0" {% if current_filters.cc == '0' %}selected{% endif %}>No</option>
         </select>
-    </p>
-    <p>
-        <label>Template</label>
-        <select name="template">
+    </div>
+    <div class="form-group">
+        <label class="form-label">Template</label>
+        <select name="template" class="form-select">
             <option value="">All</option>
             <option value="1" {% if current_filters.template == '1' %}selected{% endif %}>Yes</option>
         </select>
-    </p>
-    <p>
-        <button type="submit">Filter</button>
-        <a href="{% url 'armory:weapon_list' %}" class="btn-cancel">Clear</a>
-    </p>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <a href="{% url 'armory:weapon_list' %}" class="btn btn-secondary">Clear</a>
+    </div>
 </form>
 
 {% if weapons %}
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Faction</th>
-            <th>Games (Cost)</th>
-            <th>Range</th>
-            <th>To Hit (S/L)</th>
-            <th>Str</th>
-            <th>Dmg</th>
-            <th>Save</th>
-            <th>Ammo</th>
-            <th>Rules</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for weapon in weapons %}
-        <tr>
-            <td><a href="{% url 'armory:weapon_detail' weapon.pk %}">{{ weapon.name }}</a></td>
-            <td>{{ weapon.weapon_type.name|default:"&mdash;" }}</td>
-            <td>{{ weapon.faction.name|default:"&mdash;" }}</td>
-            <td>
-                {% for entry in weapon.weapon_games.all %}
-                    {{ entry.game.name }}{% if entry.cost is not None %} ({{ entry.cost }}){% endif %}{% if not forloop.last %}, {% endif %}
-                {% empty %}
-                    &mdash;
+<div class="card">
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Faction</th>
+                    <th>Games (Cost)</th>
+                    <th>Range</th>
+                    <th>To Hit (S/L)</th>
+                    <th>Str</th>
+                    <th>Dmg</th>
+                    <th>Save</th>
+                    <th>Ammo</th>
+                    <th>Rules</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for weapon in weapons %}
+                <tr>
+                    <td><a href="{% url 'armory:weapon_detail' weapon.pk %}" class="action-link">{{ weapon.name }}</a></td>
+                    <td>{{ weapon.weapon_type.name|default:"—" }}</td>
+                    <td>{{ weapon.faction.name|default:"—" }}</td>
+                    <td>
+                        {% for entry in weapon.weapon_games.all %}
+                            {{ entry.game.name }}{% if entry.cost is not None %} ({{ entry.cost }}){% endif %}{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            —
+                        {% endfor %}
+                    </td>
+                    <td>{% if weapon.short_range == weapon.long_range %}{{ weapon.short_range }}{% else %}{{ weapon.short_range }} / {{ weapon.long_range }}{% endif %}</td>
+                    <td>{{ weapon.to_hit_short_display }} / {{ weapon.to_hit_long_display }}</td>
+                    <td>{{ weapon.strength }}</td>
+                    <td>{{ weapon.damage }}</td>
+                    <td>{{ weapon.save_modifier }}</td>
+                    <td>{{ weapon.ammo_roll }}</td>
+                    <td>
+                        {% for rule in weapon.special_rules.all %}
+                            {{ rule.name }}{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            —
+                        {% endfor %}
+                    </td>
+                    <td class="actions">
+                        <a href="{% url 'armory:weapon_update' weapon.pk %}" class="action-link">Edit</a>
+                        <button class="action-delete js-delete-confirm" data-delete-url="{% url 'armory:weapon_delete' weapon.pk %}" data-item-name="{{ weapon.name }}">Delete</button>
+                    </td>
+                </tr>
                 {% endfor %}
-            </td>
-            <td>{% if weapon.short_range == weapon.long_range %}{{ weapon.short_range }}{% else %}{{ weapon.short_range }} / {{ weapon.long_range }}{% endif %}</td>
-            <td>{{ weapon.to_hit_short_display }} / {{ weapon.to_hit_long_display }}</td>
-            <td>{{ weapon.strength }}</td>
-            <td>{{ weapon.damage }}</td>
-            <td>{{ weapon.save_modifier }}</td>
-            <td>{{ weapon.ammo_roll }}</td>
-            <td>
-                {% for rule in weapon.special_rules.all %}
-                    {{ rule.name }}{% if not forloop.last %}, {% endif %}
-                {% empty %}
-                    &mdash;
-                {% endfor %}
-            </td>
-            <td class="actions">
-                <a href="{% url 'armory:weapon_update' weapon.pk %}">Edit</a>
-                <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:weapon_delete' weapon.pk %}" data-item-name="{{ weapon.name }}">Delete</button>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+            </tbody>
+        </table>
+    </div>
+</div>
 {% else %}
-<p>No weapons match your filters. <a href="{% url 'armory:weapon_list' %}">Clear filters</a>.</p>
+<div class="card">
+    <div class="empty-state">
+        <h3>No weapons found</h3>
+        <p>No weapons match your filters. <a href="{% url 'armory:weapon_list' %}">Clear filters</a>.</p>
+    </div>
+</div>
 {% endif %}
 
 {% if is_paginated %}
-<p class="pagination">
-    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}{% for k,v in current_filters.items %}{% if k != 'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}">Prev</a>{% endif %}
-    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+<div class="pagination">
+    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}{% for k,v in current_filters.items %}{% if k != 'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}">Previous</a>{% endif %}
+    <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
     {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}{% for k,v in current_filters.items %}{% if k != 'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}">Next</a>{% endif %}
-</p>
+</div>
 {% endif %}
 {% endblock %}

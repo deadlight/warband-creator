@@ -2,61 +2,79 @@
 
 {% block title %}Characters{% endblock %}
 
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <div class="breadcrumbs-content">
+        <a href="{% url 'armory:character_list' %}">Characters</a>
+    </div>
+</div>
+{% endblock %}
+
 {% block content %}
-<div style="display: flex; justify-content: space-between; align-items: center;">
+<div class="page-header">
     <h1>Characters</h1>
-    <a href="{% url 'armory:character_create' %}" class="btn-primary">New Character</a>
+    <a href="{% url 'armory:character_create' %}" class="btn btn-primary">New Character</a>
 </div>
 
 {% if characters %}
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Faction</th>
-            <th>M</th>
-            <th>WS</th>
-            <th>BS</th>
-            <th>S</th>
-            <th>T</th>
-            <th>W</th>
-            <th>I</th>
-            <th>A</th>
-            <th>Ld</th>
-            <th>Games (Cost)</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for c in characters %}
-        <tr>
-            <td><a href="{% url 'armory:character_detail' c.pk %}">{{ c.name }}</a></td>
-            <td>{{ c.faction.name|default:"&mdash;" }}</td>
-            <td>{{ c.movement }}</td>
-            <td>{{ c.weapon_skill }}</td>
-            <td>{{ c.ballistic_skill }}</td>
-            <td>{{ c.strength }}</td>
-            <td>{{ c.toughness }}</td>
-            <td>{{ c.wounds }}</td>
-            <td>{{ c.initiative }}</td>
-            <td>{{ c.attacks }}</td>
-            <td>{{ c.leadership }}</td>
-            <td>
-                {% for entry in c.character_games.all %}
-                    {{ entry.game.name }}{% if entry.cost is not None %} ({{ entry.cost }}){% endif %}{% if not forloop.last %}, {% endif %}
-                {% empty %}
-                    &mdash;
+<div class="card">
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Faction</th>
+                    <th>M</th>
+                    <th>WS</th>
+                    <th>BS</th>
+                    <th>S</th>
+                    <th>T</th>
+                    <th>W</th>
+                    <th>I</th>
+                    <th>A</th>
+                    <th>Ld</th>
+                    <th>Games (Cost)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in characters %}
+                <tr>
+                    <td><a href="{% url 'armory:character_detail' c.pk %}" class="action-link">{{ c.name }}</a></td>
+                    <td>{{ c.faction.name|default:"—" }}</td>
+                    <td>{{ c.movement }}</td>
+                    <td>{{ c.weapon_skill }}</td>
+                    <td>{{ c.ballistic_skill }}</td>
+                    <td>{{ c.strength }}</td>
+                    <td>{{ c.toughness }}</td>
+                    <td>{{ c.wounds }}</td>
+                    <td>{{ c.initiative }}</td>
+                    <td>{{ c.attacks }}</td>
+                    <td>{{ c.leadership }}</td>
+                    <td>
+                        {% for entry in c.character_games.all %}
+                            {{ entry.game.name }}{% if entry.cost is not None %} ({{ entry.cost }}){% endif %}{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            —
+                        {% endfor %}
+                    </td>
+                    <td class="actions">
+                        <a href="{% url 'armory:character_update' c.pk %}" class="action-link">Edit</a>
+                        <button class="action-delete js-delete-confirm" data-delete-url="{% url 'armory:character_delete' c.pk %}" data-item-name="{{ c.name }}">Delete</button>
+                    </td>
+                </tr>
                 {% endfor %}
-            </td>
-            <td class="actions">
-                <a href="{% url 'armory:character_update' c.pk %}">Edit</a>
-                <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:character_delete' c.pk %}" data-item-name="{{ c.name }}">Delete</button>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+            </tbody>
+        </table>
+    </div>
+</div>
 {% else %}
-<p>No characters yet. <a href="{% url 'armory:character_create' %}">Create one</a>.</p>
+<div class="card">
+    <div class="empty-state">
+        <h3>No characters yet</h3>
+        <p>Get started by creating your first character.</p>
+        <a href="{% url 'armory:character_create' %}" class="btn btn-primary">Create Character</a>
+    </div>
+</div>
 {% endif %}
 {% endblock %}

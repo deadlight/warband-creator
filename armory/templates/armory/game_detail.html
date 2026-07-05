@@ -2,46 +2,72 @@
 
 {% block title %}{{ game.name }}{% endblock %}
 
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <div class="breadcrumbs-content">
+        <a href="{% url 'armory:game_list' %}">Games</a>
+        <span class="separator">/</span>
+        <span class="current">{{ game.name }}</span>
+    </div>
+</div>
+{% endblock %}
+
 {% block content %}
-<h1>{{ game.name }}</h1>
+<div class="page-header">
+    <h1>{{ game.name }}</h1>
+    <div class="actions">
+        <a href="{% url 'armory:game_update' game.pk %}" class="btn btn-secondary">Edit</a>
+        <button class="btn btn-danger js-delete-confirm" data-delete-url="{% url 'armory:game_delete' game.pk %}" data-item-name="{{ game.name }}">Delete</button>
+    </div>
+</div>
 
 {% if game.description %}
-<p>{{ game.description }}</p>
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-body">
+        <p>{{ game.description }}</p>
+    </div>
+</div>
 {% endif %}
 
-<h2>Weapons</h2>
-{% if game.weapon_games.all %}
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Cost</th>
-            <th>Range</th>
-            <th>To Hit (S/L)</th>
-            <th>Str</th>
-            <th>Dmg</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for entry in game.weapon_games.all %}
-        <tr>
-            <td><a href="{% url 'armory:weapon_detail' entry.weapon.pk %}">{{ entry.weapon.name }}</a></td>
-            <td>{{ entry.cost|default:"&mdash;" }}</td>
-            <td>{% if entry.weapon.short_range == entry.weapon.long_range %}{{ entry.weapon.short_range }}{% else %}{{ entry.weapon.short_range }} / {{ entry.weapon.long_range }}{% endif %}</td>
-            <td>{{ entry.weapon.to_hit_short_display }} / {{ entry.weapon.to_hit_long_display }}</td>
-            <td>{{ entry.weapon.strength }}</td>
-            <td>{{ entry.weapon.damage }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p>No weapons in this game yet.</p>
-{% endif %}
+<div class="card">
+    <div class="card-header">
+        <h2 style="margin: 0; font-size: 1.125rem;">Weapons</h2>
+    </div>
+    {% if game.weapon_games.all %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Cost</th>
+                    <th>Range</th>
+                    <th>To Hit (S/L)</th>
+                    <th>Str</th>
+                    <th>Dmg</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in game.weapon_games.all %}
+                <tr>
+                    <td><a href="{% url 'armory:weapon_detail' entry.weapon.pk %}" class="action-link">{{ entry.weapon.name }}</a></td>
+                    <td>{{ entry.cost|default:"—" }}</td>
+                    <td>{% if entry.weapon.short_range == entry.weapon.long_range %}{{ entry.weapon.short_range }}{% else %}{{ entry.weapon.short_range }} / {{ entry.weapon.long_range }}{% endif %}</td>
+                    <td>{{ entry.weapon.to_hit_short_display }} / {{ entry.weapon.to_hit_long_display }}</td>
+                    <td>{{ entry.weapon.strength }}</td>
+                    <td>{{ entry.weapon.damage }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="card-body">
+        <p>No weapons in this game yet.</p>
+    </div>
+    {% endif %}
+</div>
 
-<p>
-    <a href="{% url 'armory:game_update' game.pk %}">Edit</a>
-    <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:game_delete' game.pk %}" data-item-name="{{ game.name }}">Delete</button>
-    <a href="{% url 'armory:game_list' %}">Back to games</a>
-</p>
+<div style="margin-top: 1.5rem;">
+    <a href="{% url 'armory:game_list' %}" class="btn btn-secondary">Back to Games</a>
+</div>
 {% endblock %}

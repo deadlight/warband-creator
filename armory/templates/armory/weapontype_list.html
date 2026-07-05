@@ -1,36 +1,54 @@
 {% extends "armory/base.html" %}
 
-{% block title %}Types{% endblock %}
+{% block title %}Weapon Types{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <div class="breadcrumbs-content">
+        <a href="{% url 'armory:weapontype_list' %}">Weapon Types</a>
+    </div>
+</div>
+{% endblock %}
 
 {% block content %}
-<div style="display: flex; justify-content: space-between; align-items: center;">
+<div class="page-header">
     <h1>Weapon Types</h1>
-    <a href="{% url 'armory:weapontype_create' %}" class="btn-primary">New Type</a>
+    <a href="{% url 'armory:weapontype_create' %}" class="btn btn-primary">New Type</a>
 </div>
 
 {% if weapon_types %}
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Weapons</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for wt in weapon_types %}
-        <tr>
-            <td>{{ wt.name }}</td>
-            <td>{{ wt.weapons.count }}</td>
-            <td class="actions">
-                <a href="{% url 'armory:weapontype_update' wt.pk %}">Edit</a>
-                <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:weapontype_delete' wt.pk %}" data-item-name="{{ wt.name }}">Delete</button>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="card">
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Weapons</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for wt in weapon_types %}
+                <tr>
+                    <td>{{ wt.name }}</td>
+                    <td>{{ wt.weapons.count }}</td>
+                    <td class="actions">
+                        <a href="{% url 'armory:weapontype_update' wt.pk %}" class="action-link">Edit</a>
+                        <button class="action-delete js-delete-confirm" data-delete-url="{% url 'armory:weapontype_delete' wt.pk %}" data-item-name="{{ wt.name }}">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% else %}
-<p>No types yet. <a href="{% url 'armory:weapontype_create' %}">Create one</a>.</p>
+<div class="card">
+    <div class="empty-state">
+        <h3>No weapon types yet</h3>
+        <p>Get started by creating your first weapon type.</p>
+        <a href="{% url 'armory:weapontype_create' %}" class="btn btn-primary">Create Type</a>
+    </div>
+</div>
 {% endif %}
 {% endblock %}

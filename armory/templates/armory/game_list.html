@@ -2,35 +2,53 @@
 
 {% block title %}Games{% endblock %}
 
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <div class="breadcrumbs-content">
+        <a href="{% url 'armory:game_list' %}">Games</a>
+    </div>
+</div>
+{% endblock %}
+
 {% block content %}
-<div style="display: flex; justify-content: space-between; align-items: center;">
+<div class="page-header">
     <h1>Games</h1>
-    <a href="{% url 'armory:game_create' %}" class="btn-primary">New Game</a>
+    <a href="{% url 'armory:game_create' %}" class="btn btn-primary">New Game</a>
 </div>
 
 {% if games %}
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Weapons</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for game in games %}
-        <tr>
-            <td><a href="{% url 'armory:game_detail' game.pk %}">{{ game.name }}</a></td>
-            <td>{{ game.weapons.count }}</td>
-            <td class="actions">
-                <a href="{% url 'armory:game_update' game.pk %}">Edit</a>
-                <button class="js-delete-confirm btn-delete-link" data-delete-url="{% url 'armory:game_delete' game.pk %}" data-item-name="{{ game.name }}">Delete</button>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="card">
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Weapons</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in games %}
+                <tr>
+                    <td><a href="{% url 'armory:game_detail' game.pk %}" class="action-link">{{ game.name }}</a></td>
+                    <td>{{ game.weapon_games.count }}</td>
+                    <td class="actions">
+                        <a href="{% url 'armory:game_update' game.pk %}" class="action-link">Edit</a>
+                        <button class="action-delete js-delete-confirm" data-delete-url="{% url 'armory:game_delete' game.pk %}" data-item-name="{{ game.name }}">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% else %}
-<p>No games yet. <a href="{% url 'armory:game_create' %}">Create one</a>.</p>
+<div class="card">
+    <div class="empty-state">
+        <h3>No games yet</h3>
+        <p>Get started by creating your first game system.</p>
+        <a href="{% url 'armory:game_create' %}" class="btn btn-primary">Create Game</a>
+    </div>
+</div>
 {% endif %}
 {% endblock %}
