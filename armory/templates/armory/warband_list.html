@@ -3,7 +3,10 @@
 {% block title %}Warbands{% endblock %}
 
 {% block content %}
-<h1>Warbands</h1>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>Warbands</h1>
+    <a href="{% url 'warbands:warband_create' %}" class="btn-primary">New Warband</a>
+</div>
 
 {% if warbands %}
 <table>

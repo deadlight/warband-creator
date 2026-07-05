@@ -3,7 +3,10 @@
 {% block title %}Characters{% endblock %}
 
 {% block content %}
-<h1>Characters</h1>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>Characters</h1>
+    <a href="{% url 'armory:character_create' %}" class="btn-primary">New Character</a>
+</div>
 
 {% if characters %}
 <table>

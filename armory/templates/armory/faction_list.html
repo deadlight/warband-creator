@@ -3,7 +3,10 @@
 {% block title %}Factions{% endblock %}
 
 {% block content %}
-<h1>Factions</h1>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>Factions</h1>
+    <a href="{% url 'armory:faction_create' %}" class="btn-primary">New Faction</a>
+</div>
 
 {% if factions %}
 <table>

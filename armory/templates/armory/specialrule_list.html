@@ -3,7 +3,10 @@
 {% block title %}Special Rules{% endblock %}
 
 {% block content %}
-<h1>Special Rules</h1>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>Special Rules</h1>
+    <a href="{% url 'armory:specialrule_create' %}" class="btn-primary">New Rule</a>
+</div>
 
 {% if special_rules %}
 <table>

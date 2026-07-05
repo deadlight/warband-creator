@@ -3,7 +3,10 @@
 {% block title %}Weapons{% endblock %}
 
 {% block content %}
-<h1>Weapons</h1>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>Weapons</h1>
+    <a href="{% url 'armory:weapon_create' %}" class="btn-primary">New Weapon</a>
+</div>
 
 <form method="get" class="filter-form">
     <p>
