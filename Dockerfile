@@ -18,10 +18,12 @@ RUN poetry install --only main --no-interaction --no-ansi --no-root
 
 COPY . .
 
-RUN SECRET_KEY=docker-build poetry run python manage.py collectstatic --noinput
+RUN useradd -m appuser && \
+    chown -R appuser:appuser /app
 
-RUN useradd -m appuser
 USER appuser
+
+RUN SECRET_KEY=docker-build poetry run python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
