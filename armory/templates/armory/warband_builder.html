@@ -77,14 +77,39 @@
                         <span class="member-character">{{ member.character.name }}</span>
                     </div>
 
+                    <div class="member-statline">
+                        <div class="statline-label">Stats:</div>
+                        <div class="statline-values">
+                            <span class="stat-item" title="Movement">M: {{ member.character.movement }}</span>
+                            <span class="stat-item" title="Weapon Skill">WS: {{ member.character.weapon_skill }}</span>
+                            <span class="stat-item" title="Ballistic Skill">BS: {{ member.character.ballistic_skill }}</span>
+                            <span class="stat-item" title="Strength">S: {{ member.character.strength }}</span>
+                            <span class="stat-item" title="Toughness">T: {{ member.character.toughness }}</span>
+                            <span class="stat-item" title="Wounds">W: {{ member.character.wounds }}</span>
+                            <span class="stat-item" title="Initiative">I: {{ member.character.initiative }}</span>
+                            <span class="stat-item" title="Attacks">A: {{ member.character.attacks }}</span>
+                            <span class="stat-item" title="Leadership">Ld: {{ member.character.leadership }}</span>
+                        </div>
+                    </div>
+
                     <div class="member-weapons">
                         <h4>Weapons:</h4>
                         {% if member.weapons.all %}
                         <ul class="weapon-list">
                             {% for mw in member.weapons.all %}
                             <li class="weapon-item">
-                                <span>{{ mw.weapon_game.weapon.name }}</span>
-                                <span class="weapon-cost">{{ mw.weapon_game.cost|default:"—" }} pts</span>
+                                <div class="weapon-info">
+                                    <span class="weapon-name">{{ mw.weapon_game.weapon.name }}</span>
+                                    <span class="weapon-cost">{{ mw.weapon_game.cost|default:"—" }} pts</span>
+                                </div>
+                                <div class="weapon-stats">
+                                    <span class="weapon-stat" title="Range">Range: {{ mw.weapon_game.weapon.short_range }}/{{ mw.weapon_game.weapon.long_range }}</span>
+                                    <span class="weapon-stat" title="To Hit">Hit: {{ mw.weapon_game.weapon.to_hit_short_display }}/{{ mw.weapon_game.weapon.to_hit_long_display }}</span>
+                                    <span class="weapon-stat" title="Strength">Str: {{ mw.weapon_game.weapon.strength }}</span>
+                                    <span class="weapon-stat" title="Damage">Dmg: {{ mw.weapon_game.weapon.damage }}</span>
+                                    <span class="weapon-stat" title="Save Modifier">Save: {{ mw.weapon_game.weapon.save_modifier }}</span>
+                                    <span class="weapon-stat" title="Ammo Roll">Ammo: {{ mw.weapon_game.weapon.ammo_roll }}</span>
+                                </div>
                             </li>
                             {% endfor %}
                         </ul>
@@ -252,6 +277,36 @@
     font-size: 0.875rem;
 }
 
+.member-statline {
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+}
+
+.statline-label {
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.statline-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.stat-item {
+    font-size: 0.75rem;
+    font-family: monospace;
+    background: var(--color-bg-subtle);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border-light);
+}
+
 .member-weapons h4 {
     margin: 0 0 0.5rem;
     font-size: 0.875rem;
@@ -266,17 +321,44 @@
 
 .weapon-item {
     display: flex;
-    justify-content: space-between;
-    padding: 0.5rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
     background: var(--color-bg);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     margin-bottom: 0.5rem;
 }
 
+.weapon-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.weapon-name {
+    font-weight: 500;
+}
+
 .weapon-cost {
     color: var(--color-text-light);
     font-size: 0.875rem;
+}
+
+.weapon-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.weapon-stat {
+    font-size: 0.7rem;
+    font-family: monospace;
+    background: var(--color-bg-subtle);
+    padding: 0.2rem 0.4rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border-light);
+    color: var(--color-text-light);
 }
 
 .no-weapons {
