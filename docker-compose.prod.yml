@@ -1,0 +1,22 @@
+services:
+  web:
+    restart: unless-stopped
+    command: []                         # run Dockerfile CMD (Gunicorn)
+    volumes: []                         # use built image, not live code mount
+    expose:
+      - "8000"
+    environment:
+      DEBUG: "0"
+    env_file: .env
+    networks:
+      - default
+      - shared
+
+  db:
+    restart: unless-stopped
+    ports: []                           # don't expose DB to host
+    env_file: .env
+
+networks:
+  shared:
+    external: true

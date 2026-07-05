@@ -1,5 +1,6 @@
 .PHONY: help up down restart build logs shell db-shell migrate makemigrations \
         migrate-local makemigrations-local createsuperuser collectstatic collectstatic-local \
+        deploy caddy-reload backup-db \
         test test-cov format lint pre-commit install hooks clean
 
 help: ## Show this help
@@ -82,6 +83,17 @@ test-cov: ## Run tests with coverage
 
 test-docker: ## Run tests inside docker container
 	docker compose exec web poetry run pytest
+
+# ---- Deployment ----
+
+deploy: ## Build and start production stack
+	docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+
+caddy-reload: ## Reload Caddy config after Caddyfile changes
+	docker compose -f deploy/caddy/docker-compose.yml exec caddy caddy reload
+
+backup-db: ## Backup PostgreSQL database to a .sql.gz file
+	docker compose exec -T db pg_dump -U wargear wargear | gzip > backup-$$(date +%Y%m%d-%H%M).sql.gz
 
 # ---- Cleanup ----
 

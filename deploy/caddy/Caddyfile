@@ -1,0 +1,7 @@
+# Change this to your real domain. For multiple domains use commas:
+#   yourdomain.com, www.yourdomain.com { ... }
+#
+# After editing, reload with: make caddy-reload
+wargear.example.com {
+    reverse_proxy wargear-web-1:8000
+}

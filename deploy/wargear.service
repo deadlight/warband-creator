@@ -1,0 +1,13 @@
+[Unit]
+Description=Wargear
+Requires=docker.service
+After=docker.service network-online.target
+
+[Service]
+WorkingDirectory=/opt/wargear
+ExecStart=/usr/bin/docker compose -f docker-compose.yml -f docker-compose.prod.yml up
+ExecStop=/usr/bin/docker compose -f docker-compose.yml -f docker-compose.prod.yml down
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
