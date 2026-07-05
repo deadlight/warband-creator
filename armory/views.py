@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Prefetch
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -32,7 +33,7 @@ from .models import (
 )
 
 
-class WeaponListView(ListView):
+class WeaponListView(LoginRequiredMixin, ListView):
     model = Weapon
     context_object_name = "weapons"
     paginate_by = 50
@@ -83,7 +84,7 @@ class WeaponListView(ListView):
         return context
 
 
-class WeaponDetailView(DetailView):
+class WeaponDetailView(LoginRequiredMixin, DetailView):
     model = Weapon
     context_object_name = "weapon"
 
@@ -93,24 +94,24 @@ class WeaponDetailView(DetailView):
         ).select_related("weapon_type", "faction")
 
 
-class WeaponCreateView(CreateView):
+class WeaponCreateView(LoginRequiredMixin, CreateView):
     model = Weapon
     form_class = WeaponForm
     success_url = reverse_lazy("armory:weapon_list")
 
 
-class WeaponUpdateView(UpdateView):
+class WeaponUpdateView(LoginRequiredMixin, UpdateView):
     model = Weapon
     form_class = WeaponForm
     success_url = reverse_lazy("armory:weapon_list")
 
 
-class WeaponDeleteView(DeleteView):
+class WeaponDeleteView(LoginRequiredMixin, DeleteView):
     model = Weapon
     success_url = reverse_lazy("armory:weapon_list")
 
 
-class WeaponLinkCreateView(CreateView):
+class WeaponLinkCreateView(LoginRequiredMixin, CreateView):
     model = WeaponGame
     form_class = WeaponGameForm
     template_name = "armory/weapongame_form.html"
@@ -130,7 +131,7 @@ class WeaponLinkCreateView(CreateView):
         return reverse("armory:weapon_detail", kwargs={"pk": self.kwargs["weapon_pk"]})
 
 
-class WeaponLinkDeleteView(BaseDeleteView):
+class WeaponLinkDeleteView(LoginRequiredMixin, BaseDeleteView):
     model = WeaponGame
     template_name = "armory/weapongame_confirm_delete.html"
 
@@ -143,7 +144,7 @@ class WeaponLinkDeleteView(BaseDeleteView):
         return context
 
 
-class WeaponProfileCreateView(CreateView):
+class WeaponProfileCreateView(LoginRequiredMixin, CreateView):
     model = WeaponProfile
     form_class = WeaponProfileForm
     template_name = "armory/weaponprofile_form.html"
@@ -166,7 +167,7 @@ class WeaponProfileCreateView(CreateView):
         return reverse("armory:weapon_detail", kwargs={"pk": self.kwargs["weapon_pk"]})
 
 
-class WeaponProfileUpdateView(UpdateView):
+class WeaponProfileUpdateView(LoginRequiredMixin, UpdateView):
     model = WeaponProfile
     form_class = WeaponProfileForm
     template_name = "armory/weaponprofile_form.html"
@@ -180,7 +181,7 @@ class WeaponProfileUpdateView(UpdateView):
         return reverse("armory:weapon_detail", kwargs={"pk": self.kwargs["weapon_pk"]})
 
 
-class WeaponProfileDeleteView(DeleteView):
+class WeaponProfileDeleteView(LoginRequiredMixin, DeleteView):
     model = WeaponProfile
     template_name = "armory/weaponprofile_confirm_delete.html"
 
@@ -193,12 +194,12 @@ class WeaponProfileDeleteView(DeleteView):
         return reverse("armory:weapon_detail", kwargs={"pk": self.kwargs["weapon_pk"]})
 
 
-class GameListView(ListView):
+class GameListView(LoginRequiredMixin, ListView):
     model = Game
     context_object_name = "games"
 
 
-class GameDetailView(DetailView):
+class GameDetailView(LoginRequiredMixin, DetailView):
     model = Game
     context_object_name = "game"
 
@@ -213,95 +214,95 @@ class GameDetailView(DetailView):
         )
 
 
-class GameCreateView(CreateView):
+class GameCreateView(LoginRequiredMixin, CreateView):
     model = Game
     form_class = GameForm
     success_url = reverse_lazy("armory:game_list")
 
 
-class GameUpdateView(UpdateView):
+class GameUpdateView(LoginRequiredMixin, UpdateView):
     model = Game
     form_class = GameForm
     success_url = reverse_lazy("armory:game_list")
 
 
-class GameDeleteView(DeleteView):
+class GameDeleteView(LoginRequiredMixin, DeleteView):
     model = Game
     success_url = reverse_lazy("armory:game_list")
 
 
-class WeaponTypeListView(ListView):
+class WeaponTypeListView(LoginRequiredMixin, ListView):
     model = WeaponType
     context_object_name = "weapon_types"
 
 
-class WeaponTypeCreateView(CreateView):
+class WeaponTypeCreateView(LoginRequiredMixin, CreateView):
     model = WeaponType
     form_class = WeaponTypeForm
     success_url = reverse_lazy("armory:weapontype_list")
 
 
-class WeaponTypeUpdateView(UpdateView):
+class WeaponTypeUpdateView(LoginRequiredMixin, UpdateView):
     model = WeaponType
     form_class = WeaponTypeForm
     success_url = reverse_lazy("armory:weapontype_list")
 
 
-class WeaponTypeDeleteView(DeleteView):
+class WeaponTypeDeleteView(LoginRequiredMixin, DeleteView):
     model = WeaponType
     success_url = reverse_lazy("armory:weapontype_list")
 
 
-class SpecialRuleListView(ListView):
+class SpecialRuleListView(LoginRequiredMixin, ListView):
     model = SpecialRule
     context_object_name = "special_rules"
 
 
-class SpecialRuleDetailView(DetailView):
+class SpecialRuleDetailView(LoginRequiredMixin, DetailView):
     model = SpecialRule
     context_object_name = "special_rule"
 
 
-class SpecialRuleCreateView(CreateView):
+class SpecialRuleCreateView(LoginRequiredMixin, CreateView):
     model = SpecialRule
     form_class = SpecialRuleForm
     success_url = reverse_lazy("armory:specialrule_list")
 
 
-class SpecialRuleUpdateView(UpdateView):
+class SpecialRuleUpdateView(LoginRequiredMixin, UpdateView):
     model = SpecialRule
     form_class = SpecialRuleForm
     success_url = reverse_lazy("armory:specialrule_list")
 
 
-class SpecialRuleDeleteView(DeleteView):
+class SpecialRuleDeleteView(LoginRequiredMixin, DeleteView):
     model = SpecialRule
     success_url = reverse_lazy("armory:specialrule_list")
 
 
-class FactionListView(ListView):
+class FactionListView(LoginRequiredMixin, ListView):
     model = Faction
     context_object_name = "factions"
 
 
-class FactionCreateView(CreateView):
+class FactionCreateView(LoginRequiredMixin, CreateView):
     model = Faction
     form_class = FactionForm
     success_url = reverse_lazy("armory:faction_list")
 
 
-class FactionUpdateView(UpdateView):
+class FactionUpdateView(LoginRequiredMixin, UpdateView):
     model = Faction
     form_class = FactionForm
     success_url = reverse_lazy("armory:faction_list")
 
 
-class FactionDeleteView(DeleteView):
+class FactionDeleteView(LoginRequiredMixin, DeleteView):
     model = Faction
     success_url = reverse_lazy("armory:faction_list")
 
 
-class CharacterListView(ListView):
+class CharacterListView(LoginRequiredMixin, ListView):
     model = Character
     context_object_name = "characters"
 
@@ -311,7 +312,7 @@ class CharacterListView(ListView):
         )
 
 
-class CharacterDetailView(DetailView):
+class CharacterDetailView(LoginRequiredMixin, DetailView):
     model = Character
     context_object_name = "character"
 
@@ -321,43 +322,47 @@ class CharacterDetailView(DetailView):
         )
 
 
-class CharacterCreateView(CreateView):
+class CharacterCreateView(LoginRequiredMixin, CreateView):
     model = Character
     form_class = CharacterForm
     success_url = reverse_lazy("armory:character_list")
 
 
-class CharacterUpdateView(UpdateView):
+class CharacterUpdateView(LoginRequiredMixin, UpdateView):
     model = Character
     form_class = CharacterForm
     success_url = reverse_lazy("armory:character_list")
 
 
-class CharacterDeleteView(DeleteView):
+class CharacterDeleteView(LoginRequiredMixin, DeleteView):
     model = Character
     success_url = reverse_lazy("armory:character_list")
 
 
-class WarbandListView(ListView):
+class WarbandListView(LoginRequiredMixin, ListView):
     model = Warband
     context_object_name = "warbands"
 
     def get_queryset(self):
         members_qs = WarbandMember.objects.order_by("order", "character__name")
-        return Warband.objects.annotate(member_count=Count("members")).prefetch_related(
-            Prefetch("members", queryset=members_qs.select_related("character")),
-            "game",
-            "faction",
+        return (
+            Warband.objects.filter(user=self.request.user)
+            .annotate(member_count=Count("members"))
+            .prefetch_related(
+                Prefetch("members", queryset=members_qs.select_related("character")),
+                "game",
+                "faction",
+            )
         )
 
 
-class WarbandDetailView(DetailView):
+class WarbandDetailView(LoginRequiredMixin, DetailView):
     model = Warband
     context_object_name = "warband"
 
     def get_queryset(self):
         members_qs = WarbandMember.objects.order_by("order", "character__name")
-        return Warband.objects.prefetch_related(
+        return Warband.objects.filter(user=self.request.user).prefetch_related(
             Prefetch(
                 "members",
                 queryset=members_qs.prefetch_related(
@@ -375,31 +380,43 @@ class WarbandDetailView(DetailView):
         )
 
 
-class WarbandCreateView(CreateView):
+class WarbandCreateView(LoginRequiredMixin, CreateView):
     model = Warband
     form_class = WarbandForm
     success_url = reverse_lazy("warbands:warband_list")
 
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
-class WarbandUpdateView(UpdateView):
+
+class WarbandUpdateView(LoginRequiredMixin, UpdateView):
     model = Warband
     form_class = WarbandForm
     success_url = reverse_lazy("warbands:warband_list")
 
+    def get_queryset(self):
+        return Warband.objects.filter(user=self.request.user)
 
-class WarbandDeleteView(DeleteView):
+
+class WarbandDeleteView(LoginRequiredMixin, DeleteView):
     model = Warband
     success_url = reverse_lazy("warbands:warband_list")
 
+    def get_queryset(self):
+        return Warband.objects.filter(user=self.request.user)
 
-class WarbandMemberCreateView(CreateView):
+
+class WarbandMemberCreateView(LoginRequiredMixin, CreateView):
     model = WarbandMember
     form_class = WarbandMemberForm
     template_name = "armory/warbandmember_form.html"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        self.warband = get_object_or_404(Warband, pk=self.kwargs["warband_pk"])
+        self.warband = get_object_or_404(
+            Warband, pk=self.kwargs["warband_pk"], user=self.request.user
+        )
         kwargs["warband"] = self.warband
         return kwargs
 
@@ -416,10 +433,13 @@ class WarbandMemberCreateView(CreateView):
         return reverse("warbands:warband_detail", kwargs={"pk": self.kwargs["warband_pk"]})
 
 
-class WarbandMemberUpdateView(UpdateView):
+class WarbandMemberUpdateView(LoginRequiredMixin, UpdateView):
     model = WarbandMember
     form_class = WarbandMemberForm
     template_name = "armory/warbandmember_form.html"
+
+    def get_queryset(self):
+        return WarbandMember.objects.filter(warband__user=self.request.user)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -436,20 +456,23 @@ class WarbandMemberUpdateView(UpdateView):
         return reverse("warbands:warband_detail", kwargs={"pk": self.object.warband_id})
 
 
-class WarbandMemberDeleteView(DeleteView):
+class WarbandMemberDeleteView(LoginRequiredMixin, DeleteView):
     model = WarbandMember
     template_name = "armory/warbandmember_confirm_delete.html"
 
+    def get_queryset(self):
+        return WarbandMember.objects.filter(warband__user=self.request.user)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["warband"] = get_object_or_404(Warband, pk=self.kwargs["warband_pk"])
+        context["warband"] = self.object.warband
         return context
 
     def get_success_url(self):
-        return reverse("warbands:warband_detail", kwargs={"pk": self.kwargs["warband_pk"]})
+        return reverse("warbands:warband_detail", kwargs={"pk": self.object.warband_id})
 
 
-class WarbandMemberWeaponCreateView(CreateView):
+class WarbandMemberWeaponCreateView(LoginRequiredMixin, CreateView):
     model = WarbandMemberWeapon
     form_class = WarbandMemberWeaponForm
     template_name = "armory/warbandmemberweapon_form.html"
@@ -457,7 +480,9 @@ class WarbandMemberWeaponCreateView(CreateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         self.member = get_object_or_404(
-            WarbandMember.objects.select_related("warband__game"),
+            WarbandMember.objects.filter(warband__user=self.request.user).select_related(
+                "warband__game"
+            ),
             pk=self.kwargs["member_pk"],
         )
         kwargs["warband"] = self.member.warband
@@ -478,9 +503,12 @@ class WarbandMemberWeaponCreateView(CreateView):
         return reverse("warbands:warband_detail", kwargs={"pk": self.member.warband_id})
 
 
-class WarbandMemberWeaponDeleteView(DeleteView):
+class WarbandMemberWeaponDeleteView(LoginRequiredMixin, DeleteView):
     model = WarbandMemberWeapon
     template_name = "armory/warbandmemberweapon_confirm_delete.html"
+
+    def get_queryset(self):
+        return WarbandMemberWeapon.objects.filter(member__warband__user=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -1,5 +1,5 @@
 .PHONY: help up down restart build logs shell db-shell migrate makemigrations \
-        migrate-local makemigrations-local createsuperuser collectstatic collectstatic-local \
+        migrate-local makemigrations-local createsuperuser createuser collectstatic collectstatic-local \
         deploy caddy-reload backup-db \
         test test-cov format lint pre-commit install hooks clean
 
@@ -41,6 +41,17 @@ makemigrations: ## Generate new migrations
 
 createsuperuser: ## Create a django superuser
 	docker compose exec web poetry run python manage.py createsuperuser
+
+createuser: ## Create a regular user (make createuser USERNAME=x PASSWORD=y [EMAIL=z])
+	@if [ -z "$(USERNAME)" ] || [ -z "$(PASSWORD)" ]; then \
+		echo "Usage: make createuser USERNAME=<username> PASSWORD=<password> [EMAIL=<email>]"; \
+		exit 1; \
+	fi
+	@if [ -n "$(EMAIL)" ]; then \
+		docker compose exec web poetry run python manage.py createuser $(USERNAME) $(PASSWORD) --email $(EMAIL); \
+	else \
+		docker compose exec web poetry run python manage.py createuser $(USERNAME) $(PASSWORD); \
+	fi
 
 collectstatic: ## Collect static files (docker)
 	docker compose exec web poetry run python manage.py collectstatic --noinput

@@ -23,6 +23,15 @@
         <a href="{% url 'armory:character_create' %}">New Character</a>
         <a href="{% url 'warbands:warband_list' %}">Warbands</a>
         <a href="{% url 'warbands:warband_create' %}">New Warband</a>
+        {% if user.is_authenticated %}
+            <span style="margin-left: 2rem;">{{ user.username }}</span>
+            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn-delete-link">Logout</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}" style="margin-left: 2rem;">Login</a>
+        {% endif %}
     </nav>
 
     {% block content %}{% endblock %}

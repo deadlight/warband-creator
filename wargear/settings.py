@@ -87,3 +87,7 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "armory:weapon_list"
+LOGOUT_REDIRECT_URL = "armory:weapon_list"

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -365,6 +366,9 @@ class Warband(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name="warbands")
     faction = models.ForeignKey(
         Faction, on_delete=models.SET_NULL, null=True, blank=True, related_name="warbands"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="warbands"
     )
 
     class Meta:
