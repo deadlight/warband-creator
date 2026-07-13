@@ -602,3 +602,35 @@ tbody tr:last-child td {
         padding: var(--spacing-sm);
     }
 }
+
+.home-hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+}
+
+.home-hero h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--color-text);
+    margin-bottom: var(--spacing);
+}
+
+.home-tagline {
+    font-size: 1.25rem;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-lg);
+}
+
+.home-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing);
+}
+
+.btn-lg {
+    padding: var(--spacing) var(--spacing-lg);
+    font-size: 1.125rem;
+}

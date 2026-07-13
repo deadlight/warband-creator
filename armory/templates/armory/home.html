@@ -1,0 +1,16 @@
+{% extends "armory/base.html" %}
+{% load static %}
+
+{% block title %}Wargear &mdash; Necromunda Arsenal &amp; Warband Builder{% endblock %}
+
+{% block content %}
+<div class="home-hero">
+    <div class="home-hero-inner">
+        <h1>Wargear</h1>
+        <p class="home-tagline">Build and manage your Necromunda arsenal, characters, and warbands.</p>
+        <div class="home-actions">
+            <a href="{% url 'login' %}" class="btn btn-primary btn-lg">Sign In</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
