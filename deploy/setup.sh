@@ -9,8 +9,8 @@ set -euo pipefail
 # If REPO_URL is not set and /opt/wargear doesn't exist, the script will prompt for it.
 # If DOMAIN is not set, the script will prompt for it.
 
-APP_ROOT="/opt/wargear"
-CADDY_ROOT="/opt/caddy"
+APP_ROOT="/home/ubuntu/warband-creator"
+CADDY_ROOT="/home/ubuntu/caddy"
 ENV_FILE="$APP_ROOT/.env"
 CADDYFILE="$APP_ROOT/deploy/caddy/Caddyfile"
 CADDY_COMPOSE_ROOT="$APP_ROOT/deploy/caddy"
