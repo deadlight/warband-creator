@@ -5,8 +5,8 @@ After=docker.service network-online.target
 
 [Service]
 WorkingDirectory=/home/ubuntu/warband-creator
-ExecStart=/usr/bin/docker compose -p wargear -f docker-compose.yml -f docker-compose.prod.yml up
-ExecStop=/usr/bin/docker compose -p wargear -f docker-compose.yml -f docker-compose.prod.yml down
+ExecStart=/usr/bin/docker compose -p warband-creator -f docker-compose.yml -f docker-compose.prod.yml up
+ExecStop=/usr/bin/docker compose -p warband-creator -f docker-compose.yml -f docker-compose.prod.yml down
 Restart=always
 
 [Install]
