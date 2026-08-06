@@ -4,7 +4,7 @@ Requires=docker.service
 After=docker.service network-online.target
 
 [Service]
-WorkingDirectory=/opt/caddy
+WorkingDirectory=/home/ubuntu/caddy
 ExecStart=/usr/bin/docker compose up
 ExecStop=/usr/bin/docker compose down
 Restart=always

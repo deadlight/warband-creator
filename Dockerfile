@@ -28,6 +28,6 @@ RUN SECRET_KEY=docker-build poetry run python manage.py collectstatic --noinput
 EXPOSE 8000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD curl -f http://localhost:8000/login/ || exit 1
+    CMD curl -sf http://localhost:8000/login/ || exit 1
 
 CMD ["gunicorn", "wargear.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
